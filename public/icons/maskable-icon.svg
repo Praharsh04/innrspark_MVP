@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Innrspark maskable icon">
+  <rect width="512" height="512" fill="#FFD700"/>
+  <circle cx="256" cy="256" r="218" fill="#FFFBEA"/>
+  <path d="M256 84 296 208 426 162 319 252 423 349 294 303 256 430 218 304 90 350 193 253 86 163 217 208Z" fill="#FFD700" stroke="#212121" stroke-width="18" stroke-linejoin="round"/>
+  <path d="M166 274h180" stroke="#212121" stroke-width="28" stroke-linecap="round"/>
+  <path d="M192 240h128" stroke="#212121" stroke-width="22" stroke-linecap="round"/>
+</svg>

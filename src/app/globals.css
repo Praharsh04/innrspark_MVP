@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-yellow: #ffd700;
+  --brand-gold: #ffc107;
+  --soft-yellow: #fff9c4;
+  --cream: #fffbea;
+  --bright-white: #ffffff;
+  --text-black: #212121;
+  --muted-gray: #6b6b6b;
+  --border-gray: #d8d1a8;
+  --radius-mobile-card: 16px;
+  --radius-mobile-panel: 24px;
+  --radius-pill: 9999px;
+  --shadow-soft: 0 10px 24px rgba(33, 33, 33, 0.12);
+  --shadow-card: 0 8px 22px rgba(33, 33, 33, 0.1);
+  --shadow-button: 0 10px 18px rgba(255, 193, 7, 0.3);
+  --app-max-width: 390px;
+  --background: var(--soft-yellow);
+  --foreground: var(--text-black);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+html {
+  background: #f6f2dc;
+}
+
+body {
+  color: var(--foreground);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(255, 215, 0, 0.42), transparent 30%),
+    radial-gradient(circle at 88% 82%, rgba(255, 193, 7, 0.28), transparent 34%),
+    linear-gradient(180deg, var(--soft-yellow) 0%, var(--cream) 48%, var(--bright-white) 100%);
+  font-weight: 500;
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-left: env(safe-area-inset-left);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button,
+a,
+input,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--text-black);
+  outline-offset: 3px;
+}
+
+@layer base {
+  h1,
+  h2,
+  h3 {
+    color: var(--text-black);
+    font-weight: 800;
+    letter-spacing: 0;
+  }
+
+  p {
+    color: inherit;
+  }
+}
+
+@layer components {
+  .app-shell {
+    min-height: 100dvh;
+    background:
+      radial-gradient(circle at 18% 0%, rgba(255, 215, 0, 0.42), transparent 30%),
+      radial-gradient(circle at 88% 82%, rgba(255, 193, 7, 0.28), transparent 34%),
+      linear-gradient(180deg, var(--soft-yellow) 0%, var(--cream) 48%, var(--bright-white) 100%);
+  }
+
+  .mobile-screen {
+    min-height: 100dvh;
+    width: 100%;
+    max-width: var(--app-max-width);
+    margin-inline: auto;
+    background: transparent;
+  }
+
+  .mobile-card {
+    border: 1px solid var(--border-gray);
+    border-radius: var(--radius-mobile-card);
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: var(--shadow-card);
+  }
+
+  .mobile-panel {
+    border: 1px solid rgba(33, 33, 33, 0.14);
+    border-radius: var(--radius-mobile-panel);
+    background: rgba(255, 251, 234, 0.82);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .pill-button {
+    min-height: 56px;
+    border-radius: var(--radius-pill);
+    background: var(--brand-yellow);
+    color: var(--text-black);
+    box-shadow: var(--shadow-button);
+    font-weight: 800;
+  }
+}
