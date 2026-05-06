@@ -6,8 +6,18 @@ import { Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
 import { useUserStore } from "@/store/useUserStore";
 import { SparkLogo } from "@/components/ui/SparkLogo";
 
+const TEST_PASSWORD = "123456789";
+const TEST_USERS = [
+  "test1@innrspark.dev",
+  "test2@innrspark.dev",
+  "test3@innrspark.dev",
+  "test4@innrspark.dev",
+  "test5@innrspark.dev",
+];
+
 export function LoginForm() {
   const router = useRouter();
+  const login = useUserStore((state) => state.login);
   const loginWithGoogle = useUserStore((state) => state.loginWithGoogle);
   const hydrateFromSupabase = useUserStore((state) => state.hydrateFromSupabase);
   const authError = useUserStore((state) => state.error);
@@ -40,11 +50,16 @@ export function LoginForm() {
   const handleEmailAuth = (e: React.FormEvent) => {
     e.preventDefault();
     clearError();
-    setFormNotice(
-      isSignUp
-        ? "Email sign up is not connected yet. Continue with Google to create your account."
-        : "Email sign in is not connected yet. Continue with Google to sign in.",
-    );
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (TEST_USERS.includes(normalizedEmail) && password === TEST_PASSWORD) {
+      login(normalizedEmail);
+      router.push("/assessment/start");
+      return;
+    }
+
+    setFormNotice(`Use a test email like test1@innrspark.dev with password ${TEST_PASSWORD}, or continue with Google.`);
   };
 
   const handleGoogleLogin = async () => {
@@ -132,6 +147,17 @@ export function LoginForm() {
           {visibleAuthError ?? formNotice}
         </p>
       )}
+
+      <div className="mt-5 rounded-2xl border border-charcoal/5 bg-white/70 px-5 py-4 text-center shadow-sm">
+        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-charcoal/30">
+          Demo Login
+        </p>
+        <p className="mt-2 text-[13px] font-bold leading-relaxed text-charcoal/55">
+          Use test1@innrspark.dev to test5@innrspark.dev
+          <br />
+          Password: {TEST_PASSWORD}
+        </p>
+      </div>
 
       <div className="my-8 flex items-center justify-center gap-5">
         <div className="h-px flex-1 bg-charcoal/10" />
