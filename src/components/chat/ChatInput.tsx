@@ -20,7 +20,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className="absolute inset-x-0 bottom-[calc(5.9rem+env(safe-area-inset-bottom))] z-20 px-screen pb-3">
+    <div className="absolute inset-x-0 bottom-[calc(6.35rem+env(safe-area-inset-bottom))] z-20 px-screen pb-2">
       <form
         onSubmit={handleSubmit}
         className="flex items-center gap-2 rounded-[28px] border border-charcoal/15 bg-white/88 p-2 shadow-premium backdrop-blur-xl transition-all focus-within:border-brand-yellow/50"
@@ -28,6 +28,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         <button
           type="button"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-charcoal/5 text-charcoal/40 transition-all hover:bg-charcoal/10 active:scale-90"   
+          aria-label="Add attachment"
         >
           <Plus size={22} strokeWidth={2.5} />
         </button>
@@ -44,6 +45,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         <button
           type="button"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-transparent text-charcoal/30 transition-all hover:bg-charcoal/5 active:scale-90"
+          aria-label="Use voice input"
         >
           <Mic size={22} strokeWidth={2.5} />
         </button>
@@ -51,6 +53,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         <button
           type="submit"
           disabled={!input.trim() || disabled}
+          aria-label="Send message"
           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-all active:scale-90 ${
             input.trim() && !disabled
               ? "bg-brand-yellow text-charcoal shadow-button"

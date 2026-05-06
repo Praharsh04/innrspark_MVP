@@ -9,7 +9,7 @@ export function ChatBubble({ message }: { message: ChatMessage }) {
   return (
     <div className={`mb-4 flex w-full ${isAssistant ? "justify-start" : "justify-end"}`}>
       <div
-        className={`max-w-[90%] overflow-hidden rounded-[24px] border px-4 py-3.5 text-[15px] font-bold leading-relaxed shadow-sm ${
+        className={`max-w-[92%] overflow-hidden rounded-[24px] border px-4 py-3.5 text-[15px] font-bold leading-relaxed shadow-sm ${
           isAssistant
             ? "rounded-tl-none bg-white text-charcoal border-charcoal/5"
             : "rounded-tr-none bg-brand-yellow text-charcoal border-charcoal/10"
@@ -35,9 +35,9 @@ export function ChatBubble({ message }: { message: ChatMessage }) {
                   href={resource.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-3 inline-flex items-center gap-2 rounded-full bg-brand-yellow px-4 py-2 text-[12px] font-black uppercase tracking-wide text-charcoal"
+                  className="mt-3 inline-flex max-w-full items-center gap-2 rounded-full bg-brand-yellow px-4 py-2 text-[12px] font-black uppercase tracking-wide text-charcoal"
                 >
-                  Open link
+                  <span className="truncate">Open link</span>
                   <ExternalLink size={14} strokeWidth={3} />
                 </a>
               </article>
@@ -65,7 +65,7 @@ export function ChatBubble({ message }: { message: ChatMessage }) {
                     <PlayCircle size={14} strokeWidth={3} />
                     {video.channelTitle}
                   </p>
-                  <h3 className="mt-1 text-[15px] font-black leading-snug text-charcoal">{video.title}</h3>
+                  <h3 className="mt-1 break-words text-[15px] font-black leading-snug text-charcoal">{video.title}</h3>
                   <p className="mt-3 rounded-xl bg-white/70 px-3 py-2 text-[12px] font-bold leading-snug text-charcoal/60">
                     {video.whyRecommended}
                   </p>
@@ -73,9 +73,9 @@ export function ChatBubble({ message }: { message: ChatMessage }) {
                     href={video.watchUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="mt-3 inline-flex items-center gap-2 rounded-full bg-brand-yellow px-4 py-2 text-[12px] font-black uppercase tracking-wide text-charcoal"
+                    className="mt-3 inline-flex max-w-full items-center gap-2 rounded-full bg-brand-yellow px-4 py-2 text-[12px] font-black uppercase tracking-wide text-charcoal"
                   >
-                    Watch on YouTube
+                    <span className="truncate">Watch on YouTube</span>
                     <ExternalLink size={14} strokeWidth={3} />
                   </a>
                 </div>

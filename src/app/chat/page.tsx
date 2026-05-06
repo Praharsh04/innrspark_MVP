@@ -26,7 +26,7 @@ export default function ChatPage() {
   return (
     <MobileShell withBottomNav>
       <div className="relative flex h-full min-h-0 flex-col bg-brand-cream">
-        <header className="border-b border-charcoal/10 bg-white px-screen py-4 shadow-sm">
+        <header className="shrink-0 border-b border-charcoal/10 bg-white/95 px-screen py-4 shadow-sm backdrop-blur">
           <div className="flex items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
@@ -58,8 +58,8 @@ export default function ChatPage() {
         </header>
 
         {showPastChats && (
-          <div className="absolute inset-0 z-40 flex items-end bg-charcoal/30 px-screen pb-[calc(7.5rem+env(safe-area-inset-bottom))] backdrop-blur-sm">
-            <section className="w-full rounded-[30px] border border-white/70 bg-white p-5 shadow-premium" role="dialog" aria-modal="true" aria-labelledby="past-chats-title">
+          <div className="absolute inset-0 z-40 flex items-end bg-charcoal/30 px-screen pb-[calc(7.25rem+env(safe-area-inset-bottom))] backdrop-blur-sm">
+            <section className="w-full max-h-[68vh] overflow-hidden rounded-[30px] border border-white/70 bg-white p-5 shadow-premium" role="dialog" aria-modal="true" aria-labelledby="past-chats-title">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <h2 id="past-chats-title" className="text-[22px] font-black leading-tight text-charcoal">Past Chats</h2>
@@ -108,10 +108,10 @@ export default function ChatPage() {
         {/* Message Container */}
         <div 
           ref={scrollRef}
-          className="flex-1 space-y-3 overflow-y-auto px-screen pb-[calc(12.5rem+env(safe-area-inset-bottom))] pt-6 scroll-smooth"
+          className="min-h-0 flex-1 space-y-3 overflow-y-auto px-screen pb-[calc(13.25rem+env(safe-area-inset-bottom))] pt-5 scroll-smooth no-scrollbar"
         >
           {messages.length === 0 ? (
-            <div className="flex h-[68%] flex-col items-center justify-center px-8 text-center">
+            <div className="flex min-h-full flex-col items-center justify-center px-8 pb-8 text-center">
               <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[28px] bg-brand-yellow/12 shadow-sm">
                 <Bot size={40} className="text-brand-yellow" strokeWidth={2.5} />
               </div>
@@ -127,7 +127,7 @@ export default function ChatPage() {
           )}
 
           {isTyping && (
-            <div className="flex justify-start mb-6">
+            <div className="mb-6 flex justify-start">
               <div className="bg-white px-5 py-4 rounded-3xl rounded-tl-none shadow-sm border border-charcoal/5 flex gap-1.5 items-center">
                 <div className="h-2 w-2 rounded-full bg-brand-yellow animate-bounce" />
                 <div className="h-2 w-2 rounded-full bg-brand-yellow animate-bounce [animation-delay:0.2s]" />

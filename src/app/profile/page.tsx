@@ -257,7 +257,7 @@ function ProfileModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="profile-panel-title"
-        className="w-full rounded-[32px] border border-white/70 bg-[#fffdf5] p-5 shadow-[0_24px_60px_rgba(33,33,33,0.22)]"
+        className="max-h-[86vh] w-full overflow-y-auto rounded-[32px] border border-white/70 bg-[#fffdf5] p-5 shadow-[0_24px_60px_rgba(33,33,33,0.22)] no-scrollbar"
       >
         <div className="flex items-start justify-between gap-4">
           <div>

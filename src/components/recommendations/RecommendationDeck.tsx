@@ -103,10 +103,10 @@ export function RecommendationDeck() {
         {displayCareers.length > 10 && <span className="text-[10px] font-black text-charcoal/20">+{displayCareers.length - 10}</span>}
       </div>
 
-      <div className="relative min-h-0 flex-1">
+      <div className="relative min-h-[438px] flex-1">
         {/* Background Overlays */}
-        <div className="absolute inset-x-[12px] top-8 h-[520px] rounded-[32px] border border-charcoal/5 bg-charcoal/5 -rotate-1" />
-        <div className="absolute inset-x-[6px] top-4 h-[540px] rounded-[32px] border border-charcoal/10 bg-white/40 rotate-1" />
+        <div className="absolute inset-x-[12px] top-8 h-[430px] rounded-[30px] border border-charcoal/5 bg-charcoal/5 -rotate-1" />
+        <div className="absolute inset-x-[6px] top-4 h-[446px] rounded-[30px] border border-charcoal/10 bg-white/40 rotate-1" />
         
         <motion.div
           key={getCareerId(career)}

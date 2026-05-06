@@ -5,8 +5,8 @@ import { Sparkles } from "lucide-react";
 
 export function RecommendationLoading() {
   return (
-    <div className="flex h-full flex-col items-center justify-center bg-[linear-gradient(180deg,#fff2a8_0%,#fffbea_55%,#fffef8_100%)] px-screen text-center">
-      <div className="relative mb-10 flex h-28 w-28 items-center justify-center">
+    <div className="flex h-full min-h-0 flex-col items-center justify-center bg-[linear-gradient(180deg,#fff2a8_0%,#fffbea_55%,#fffef8_100%)] px-screen py-[max(2rem,env(safe-area-inset-top))] text-center">
+      <div className="relative mb-9 flex h-28 w-28 -translate-y-3 items-center justify-center">
         <motion.div
           className="absolute inset-0 rounded-[36px] border border-charcoal/10 bg-white/50 shadow-[0_20px_42px_rgba(255,199,0,0.18)] backdrop-blur"
           animate={{ scale: [1, 1.025, 1] }}

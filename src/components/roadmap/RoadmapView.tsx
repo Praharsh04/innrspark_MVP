@@ -35,12 +35,25 @@ export function RoadmapView() {
       return;
     }
 
-    requestAnimationFrame(() => {
-      if (scrollRef.current) {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        didScrollToStart.current = true;
+    const scrollToStart = () => {
+      if (!scrollRef.current) {
+        return;
       }
+
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: "auto",
+      });
+    };
+
+    const frame = requestAnimationFrame(() => {
+      scrollToStart();
+      window.setTimeout(scrollToStart, 60);
+      window.setTimeout(scrollToStart, 180);
+      didScrollToStart.current = true;
     });
+
+    return () => cancelAnimationFrame(frame);
   }, [roadmap]);
 
   if (!roadmap) {
@@ -94,7 +107,7 @@ export function RoadmapView() {
         <h2 className="text-[22px] font-black text-charcoal tracking-tight leading-none mt-1">{roadmap.careerTitle}</h2>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto pt-12 pb-[calc(10rem+env(safe-area-inset-bottom))] scroll-smooth no-scrollbar">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto pt-12 pb-[calc(10.5rem+env(safe-area-inset-bottom))] scroll-smooth no-scrollbar">
         <div 
           className="relative mx-auto w-full max-w-[334px]"
           style={{ height: `${containerHeight}px` }}

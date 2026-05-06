@@ -2,26 +2,11 @@
 
 import { motion } from "framer-motion";
 import { CheckCircle2, Map, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useRoadmapStore } from "@/store/useRoadmapStore";
 
 export function RoadmapGenerating() {
-  const router = useRouter();
-  const loadMockRoadmap = useRoadmapStore((state) => state.loadMockRoadmap);
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      loadMockRoadmap();
-      router.push("/roadmap");
-    }, 3000);
-
-    return () => window.clearTimeout(timeout);
-  }, [loadMockRoadmap, router]);
-
   return (
-    <div className="flex h-full flex-col items-center justify-center bg-[linear-gradient(180deg,#ffdf47_0%,#fff7bd_48%,#fffdf0_100%)] px-8 text-center">
-      <div className="mb-28 flex flex-col items-center">
+    <div className="flex h-full min-h-0 flex-col items-center justify-center bg-[linear-gradient(180deg,#ffdf47_0%,#fff7bd_48%,#fffdf0_100%)] px-8 py-[max(2rem,env(safe-area-inset-top))] text-center">
+      <div className="flex -translate-y-4 flex-col items-center">
         <motion.div
           className="relative grid h-36 w-36 place-items-center rounded-full border border-charcoal/10 bg-white/35 shadow-[0_22px_42px_rgba(255,193,7,0.24)] backdrop-blur-sm"
           animate={{ scale: [1, 1.025, 1] }}
@@ -92,7 +77,7 @@ export function RoadmapGenerating() {
         </div>
       </div>
 
-      <p className="max-w-[300px] text-[17px] font-extrabold leading-snug text-brand-black">
+      <p className="mt-10 max-w-[300px] text-[17px] font-extrabold leading-snug text-brand-black">
         Designing your personalized roadmap
       </p>
     </div>

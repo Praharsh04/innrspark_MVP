@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
@@ -44,6 +44,7 @@ const visualStyles: Record<string, { image: string }> = {
 export function OnboardingCarousel() {
   const router = useRouter();
   const { currentIndex, nextSlide, setIndex } = useOnboardingStore();
+  const didReset = useRef(false);
   
   // Skip the first slide (id: "welcome") as it's for the splash screen
   const carouselSlides = onboardingSlides.slice(1);
@@ -57,7 +58,12 @@ export function OnboardingCarousel() {
   const visual = visualStyles[currentSlide.id] ?? visualStyles.discover;
 
   useEffect(() => {
-    // Ensure we reset to 0 if we somehow get out of bounds
+    if (!didReset.current) {
+      setIndex(0);
+      didReset.current = true;
+      return;
+    }
+
     if (currentIndex >= totalSlides) {
       setIndex(0);
     }
@@ -73,8 +79,8 @@ export function OnboardingCarousel() {
   };
 
   return (
-    <div className="flex h-full flex-col overflow-hidden bg-white">
-      <div className="relative flex h-[52%] min-h-[320px] items-end justify-center overflow-hidden bg-[linear-gradient(180deg,#ffdd3d_0%,#ffd51f_76%,#ffcf00_100%)] px-5 pb-5">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden bg-white">
+      <div className="relative flex h-[43%] min-h-[282px] max-h-[360px] shrink-0 items-center justify-center overflow-hidden bg-[linear-gradient(180deg,#ffdd3d_0%,#ffd51f_76%,#ffcf00_100%)] px-5 pt-[max(1rem,env(safe-area-inset-top))]">
         <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:repeating-linear-gradient(108deg,rgba(255,255,255,0.24)_0,rgba(255,255,255,0.24)_1px,transparent_1px,transparent_7px)]" />
         <AnimatePresence mode="wait">
           <motion.div
@@ -101,7 +107,7 @@ export function OnboardingCarousel() {
         </AnimatePresence>
       </div>
 
-      <section className="relative flex min-h-0 flex-1 flex-col bg-white px-[22px] pb-[max(1.6rem,env(safe-area-inset-bottom))] pt-6">
+      <section className="relative flex min-h-0 flex-1 flex-col bg-white px-[22px] pb-[max(1.35rem,env(safe-area-inset-bottom))] pt-7">
         <AnimatePresence mode="wait">
           <motion.div
             key={`${currentSlide.id}-copy`}
@@ -109,7 +115,7 @@ export function OnboardingCarousel() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="min-h-[154px]"
+            className="min-h-[178px]"
           >
             <h1 className="max-w-[330px] text-left text-[29px] font-black leading-[1.12] text-[#111827]">
               {copy.title}
@@ -120,7 +126,7 @@ export function OnboardingCarousel() {
           </motion.div>
         </AnimatePresence>
 
-        <div className="mt-auto flex justify-center gap-2 pt-3">
+        <div className="mt-auto flex justify-center gap-2 pb-4 pt-4">
           {carouselSlides.map((_, index) => (
             <button
               key={index}
@@ -137,7 +143,7 @@ export function OnboardingCarousel() {
         <button
           type="button"
           onClick={handleNext}
-          className="mt-5 min-h-[56px] w-full rounded-[14px] border border-white/60 bg-[#ffd400] px-6 text-[16px] font-bold text-white shadow-[0_10px_18px_rgba(255,204,0,0.24)] transition active:scale-[0.98]"
+          className="min-h-[54px] w-full rounded-[16px] border border-white/60 bg-[#ffd400] px-6 text-[16px] font-black text-white shadow-[0_10px_18px_rgba(255,204,0,0.24)] transition active:scale-[0.98]"
         >
           Next
         </button>
