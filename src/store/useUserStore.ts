@@ -22,12 +22,20 @@ interface UserState {
   clearError: () => void;
 }
 
+const DEMO_USER_STORAGE_KEY = "innrspark-demo-user";
+
+const initialDemoUser = readStoredDemoUser();
+
 export const useUserStore = create<UserState>((set) => ({
-  isLoggedIn: false,
-  user: null,
+  isLoggedIn: Boolean(initialDemoUser),
+  user: initialDemoUser,
   isLoading: false,
   error: null,
-  login: (email) => set({ isLoggedIn: true, user: { email }, error: null }),
+  login: (email) => {
+    const user = { email, name: formatDemoName(email) };
+    storeDemoUser(user);
+    set({ isLoggedIn: true, user, error: null });
+  },
   loginWithGoogle: async (redirectTo) => {
     set({ isLoading: true, error: null });
 
@@ -52,6 +60,13 @@ export const useUserStore = create<UserState>((set) => ({
     return true;
   },
   hydrateFromSupabase: async () => {
+    const demoUser = readStoredDemoUser();
+
+    if (demoUser) {
+      set({ isLoggedIn: true, isLoading: false, user: demoUser, error: null });
+      return true;
+    }
+
     set({ isLoading: true, error: null });
 
     const result = await ensureProfile();
@@ -100,8 +115,51 @@ export const useUserStore = create<UserState>((set) => ({
     return Boolean(profile);
   },
   logout: async () => {
+    clearStoredDemoUser();
     await signOut();
     set({ isLoggedIn: false, user: null, error: null });
   },
   clearError: () => set({ error: null }),
 }));
+
+function readStoredDemoUser(): UserState["user"] {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const raw = window.localStorage.getItem(DEMO_USER_STORAGE_KEY);
+    const parsed = raw ? (JSON.parse(raw) as UserState["user"]) : null;
+
+    if (!parsed?.email) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function storeDemoUser(user: NonNullable<UserState["user"]>) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.setItem(DEMO_USER_STORAGE_KEY, JSON.stringify(user));
+}
+
+function clearStoredDemoUser() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.removeItem(DEMO_USER_STORAGE_KEY);
+}
+
+function formatDemoName(email: string) {
+  return email
+    .split("@")[0]
+    .replace(/[._-]+/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
