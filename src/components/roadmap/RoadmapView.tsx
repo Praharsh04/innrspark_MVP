@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRoadmapStore } from "@/store/useRoadmapStore";
 import { MilestoneModal } from "./MilestoneModal";
 import { motion, AnimatePresence } from "framer-motion";
@@ -15,6 +15,8 @@ export function RoadmapView() {
   const loadMockRoadmap = useRoadmapStore((state) => state.loadMockRoadmap);
   const setActiveMilestoneId = useRoadmapStore((state) => state.setActiveMilestoneId);
   const toggleTask = useRoadmapStore((state) => state.toggleTask);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const didScrollToStart = useRef(false);
 
   useEffect(() => {
     if (roadmap) {
@@ -27,6 +29,19 @@ export function RoadmapView() {
       }
     });
   }, [loadMockRoadmap, loadSavedRoadmap, roadmap]);
+
+  useEffect(() => {
+    if (!roadmap || didScrollToStart.current || !scrollRef.current) {
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+        didScrollToStart.current = true;
+      }
+    });
+  }, [roadmap]);
 
   if (!roadmap) {
     return (
@@ -79,7 +94,7 @@ export function RoadmapView() {
         <h2 className="text-[22px] font-black text-charcoal tracking-tight leading-none mt-1">{roadmap.careerTitle}</h2>
       </header>
 
-      <div className="flex-1 overflow-y-auto pt-12 pb-[calc(10rem+env(safe-area-inset-bottom))] scroll-smooth no-scrollbar">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto pt-12 pb-[calc(10rem+env(safe-area-inset-bottom))] scroll-smooth no-scrollbar">
         <div 
           className="relative mx-auto w-full max-w-[334px]"
           style={{ height: `${containerHeight}px` }}

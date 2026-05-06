@@ -8,15 +8,19 @@ const CHAT_FALLBACK_MESSAGE =
 
 type ChatState = {
   messages: ChatMessage[];
+  pastChats: ChatMessage[][];
   isTyping: boolean;
   status: "idle" | "sending" | "error";
   error: string | null;
   loadRecentMessages: () => Promise<void>;
   sendMessage: (content: string) => Promise<void>;
+  startNewChat: () => void;
+  restoreChat: (index: number) => void;
 };
 
 export const useChatStore = create<ChatState>((set, get) => ({
   messages: mockChatMessages,
+  pastChats: [],
   isTyping: false,
   status: "idle",
   error: null,
@@ -97,6 +101,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
       status: apiResponse.error ? "error" : "idle",
       error: apiResponse.error,
     }));
+  },
+  startNewChat: () => {
+    set((state) => ({
+      pastChats: state.messages.length > 0 ? [state.messages, ...state.pastChats].slice(0, 5) : state.pastChats,
+      messages: [],
+      error: null,
+      status: "idle",
+    }));
+  },
+  restoreChat: (index) => {
+    const chat = get().pastChats[index];
+
+    if (!chat) {
+      return;
+    }
+
+    set({ messages: chat, error: null, status: "idle" });
   },
 }));
 

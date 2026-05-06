@@ -79,16 +79,16 @@ export function LoginForm() {
   };
 
   return (
-    <div className="flex flex-col h-full px-screen pb-[max(2rem,env(safe-area-inset-bottom))] pt-12 bg-brand-cream">
-      <div className="mb-14 flex justify-center">
+    <div className="flex h-full min-h-0 flex-col overflow-y-auto bg-brand-cream px-screen pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] no-scrollbar">
+      <div className="mb-8 flex justify-center">
         <SparkLogo small />
       </div>
 
-      <h1 className="mb-10 text-center text-[34px] font-black leading-none tracking-tight text-charcoal">
+      <h1 className="mb-7 text-center text-[30px] font-black leading-tight text-charcoal">
         {isSignUp ? "Create your account" : "Start your journey"}
       </h1>
 
-      <form onSubmit={handleEmailAuth} noValidate className="space-y-6">
+      <form onSubmit={handleEmailAuth} noValidate className="space-y-4">
         <div className="space-y-2.5">
           <label className="ml-1 text-[13px] font-black uppercase tracking-widest text-charcoal/50">Email</label>
           <div className="flex min-h-[60px] items-center gap-3 rounded-2xl border border-charcoal/15 bg-white px-5 shadow-sm focus-within:border-brand-yellow transition-all">
@@ -134,7 +134,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="mt-2 min-h-[64px] w-full rounded-2xl border border-charcoal/10 bg-brand-yellow px-6 text-[20px] font-black text-charcoal shadow-button transition active:scale-[0.97] disabled:opacity-70"
+          className="mt-2 min-h-[58px] w-full rounded-2xl border border-charcoal/10 bg-brand-yellow px-6 text-[18px] font-black text-charcoal shadow-button transition active:scale-[0.97] disabled:opacity-70"
         >
           {isLoading ? "PLEASE WAIT..." : isSignUp ? "CREATE ACCOUNT" : "SIGN IN"}
         </button>
@@ -148,7 +148,7 @@ export function LoginForm() {
         </p>
       )}
 
-      <div className="mt-5 rounded-2xl border border-charcoal/5 bg-white/70 px-5 py-4 text-center shadow-sm">
+      <div className="mt-4 rounded-2xl border border-charcoal/5 bg-white/70 px-5 py-3 text-center shadow-sm">
         <p className="text-[11px] font-black uppercase tracking-[0.18em] text-charcoal/30">
           Demo Login
         </p>
@@ -159,7 +159,7 @@ export function LoginForm() {
         </p>
       </div>
 
-      <div className="my-8 flex items-center justify-center gap-5">
+      <div className="my-6 flex items-center justify-center gap-5">
         <div className="h-px flex-1 bg-charcoal/10" />
         <span className="text-[11px] font-black uppercase tracking-[0.25em] text-charcoal/30">
           {isSignUp ? "Or Sign Up with" : "Or Login with"}
@@ -171,7 +171,7 @@ export function LoginForm() {
         type="button"
         onClick={handleGoogleLogin}
         disabled={isLoading}
-        className="flex min-h-[60px] w-full items-center justify-center gap-4 rounded-2xl border border-charcoal/15 bg-white px-6 shadow-sm transition active:scale-[0.97] hover:bg-neutral-50"
+        className="flex min-h-[58px] w-full items-center justify-center gap-4 rounded-2xl border border-charcoal/15 bg-white px-6 shadow-sm transition active:scale-[0.97] hover:bg-neutral-50"
       >
         <svg className="w-6 h-6" viewBox="0 0 24 24">
           <path

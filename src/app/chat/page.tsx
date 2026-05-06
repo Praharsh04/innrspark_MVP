@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { ChevronDown, Bot } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Bot, History, MessageSquarePlus, X } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
 import { useChatStore } from "@/store/useChatStore";
 
@@ -9,8 +9,9 @@ import { ChatBubble } from "@/components/chat/ChatBubble";
 import { ChatInput } from "@/components/chat/ChatInput";
 
 export default function ChatPage() {
-  const { messages, sendMessage, isTyping, error, loadRecentMessages } = useChatStore();
+  const { messages, pastChats, sendMessage, isTyping, error, loadRecentMessages, startNewChat, restoreChat } = useChatStore();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [showPastChats, setShowPastChats] = useState(false);
 
   useEffect(() => {
     loadRecentMessages();
@@ -25,29 +26,99 @@ export default function ChatPage() {
   return (
     <MobileShell withBottomNav>
       <div className="relative flex h-full min-h-0 flex-col bg-brand-cream">
-        {/* Header */}
-        <header className="flex items-center justify-center border-b border-charcoal/10 px-screen py-7 bg-white shadow-sm">
-          <button className="flex items-center gap-2 rounded-2xl bg-brand-cream px-5 py-2.5 shadow-sm border border-charcoal/5 active:scale-[0.97] transition-all">
-            <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-            <span className="text-[18px] font-black text-charcoal tracking-tight">Sparki</span>
-            <ChevronDown size={18} strokeWidth={3} className="text-charcoal/25 ml-1" />
-          </button>
+        <header className="border-b border-charcoal/10 bg-white px-screen py-4 shadow-sm">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-green-500" />
+                <h1 className="text-[22px] font-black leading-none tracking-tight text-charcoal">Sparki</h1>
+              </div>
+              <p className="mt-1 text-[11px] font-black uppercase tracking-[0.16em] text-charcoal/30">Career coach</p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={startNewChat}
+                className="grid h-10 w-10 place-items-center rounded-2xl border border-charcoal/5 bg-brand-cream text-charcoal shadow-sm transition active:scale-95"
+                aria-label="Start a new chat"
+              >
+                <MessageSquarePlus size={19} strokeWidth={2.5} />
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowPastChats(true)}
+                className="grid h-10 w-10 place-items-center rounded-2xl border border-charcoal/5 bg-brand-cream text-charcoal shadow-sm transition active:scale-95"
+                aria-label="Open past chats"
+              >
+                <History size={19} strokeWidth={2.5} />
+              </button>
+            </div>
+          </div>
         </header>
+
+        {showPastChats && (
+          <div className="absolute inset-0 z-40 flex items-end bg-charcoal/30 px-screen pb-[calc(7.5rem+env(safe-area-inset-bottom))] backdrop-blur-sm">
+            <section className="w-full rounded-[30px] border border-white/70 bg-white p-5 shadow-premium" role="dialog" aria-modal="true" aria-labelledby="past-chats-title">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h2 id="past-chats-title" className="text-[22px] font-black leading-tight text-charcoal">Past Chats</h2>
+                  <p className="mt-1 text-[13px] font-bold text-charcoal/45">Recent visible conversations from this session.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowPastChats(false)}
+                  className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-charcoal/5 text-charcoal/55"
+                  aria-label="Close past chats"
+                >
+                  <X size={20} strokeWidth={2.6} />
+                </button>
+              </div>
+
+              <div className="mt-5 max-h-[42vh] overflow-y-auto no-scrollbar">
+                {pastChats.length === 0 ? (
+                  <p className="rounded-2xl bg-brand-cream px-4 py-5 text-center text-[14px] font-bold leading-relaxed text-charcoal/50">
+                    No past chats yet. Start a conversation, then tap New Chat to save this one here.
+                  </p>
+                ) : (
+                  <div className="space-y-2.5">
+                    {pastChats.map((chat, index) => (
+                      <button
+                        key={`${chat[0]?.id ?? "chat"}-${index}`}
+                        type="button"
+                        onClick={() => {
+                          restoreChat(index);
+                          setShowPastChats(false);
+                        }}
+                        className="w-full rounded-2xl border border-charcoal/5 bg-brand-cream/70 px-4 py-3 text-left transition active:scale-[0.98]"
+                      >
+                        <span className="block truncate text-[15px] font-black text-charcoal">
+                          {chat.find((message) => message.role === "user")?.content ?? "Saved conversation"}
+                        </span>
+                        <span className="mt-1 block text-[12px] font-bold text-charcoal/40">{chat.length} messages</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        )}
 
         {/* Message Container */}
         <div 
           ref={scrollRef}
-          className="flex-1 overflow-y-auto px-screen pt-6 pb-48 space-y-3 scroll-smooth"
+          className="flex-1 space-y-3 overflow-y-auto px-screen pb-[calc(12.5rem+env(safe-area-inset-bottom))] pt-6 scroll-smooth"
         >
           {messages.length === 0 ? (
-            <div className="flex h-[65%] flex-col items-center justify-center text-center px-8">
-              <div className="w-20 h-20 bg-brand-yellow/10 rounded-full flex items-center justify-center mb-6">
+            <div className="flex h-[68%] flex-col items-center justify-center px-8 text-center">
+              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-[28px] bg-brand-yellow/12 shadow-sm">
                 <Bot size={40} className="text-brand-yellow" strokeWidth={2.5} />
               </div>
-              <h2 className="text-[26px] font-black text-charcoal tracking-tight leading-tight">
+              <h2 className="text-[25px] font-black leading-tight tracking-tight text-charcoal">
                 How can I guide you today?
               </h2>
-              <p className="mt-3 text-[15px] font-bold text-charcoal/40 uppercase tracking-widest">ASK ANYTHING ABOUT YOUR CAREER</p>
+              <p className="mt-3 text-[13px] font-bold uppercase tracking-[0.16em] text-charcoal/40">Ask anything about your career</p>
             </div>
           ) : (
             messages.map((msg) => (

@@ -31,7 +31,7 @@ function getCareerReason(career: DisplayCareer) {
 function toCareerCardData(career: DisplayCareer): CareerCardData {
   const id = getCareerId(career);
   const richCareer = mockCareers.find((item) => item.id === id);
-  const badges = [...new Set([...(career.badges ?? []), ...(richCareer?.badges ?? [])])].slice(0, 3);
+  const badges = [...new Set([...(career.badges ?? []), ...(richCareer?.badges ?? [])])].slice(0, 5);
 
   return {
     title: career.title,
@@ -84,13 +84,13 @@ export function RecommendationDeck() {
   }
 
   return (
-    <div className="flex h-full flex-col px-screen pb-[max(2rem,env(safe-area-inset-bottom))] pt-12 text-center bg-brand-cream">
-      <div className="mb-8">
-        <h1 className="text-[32px] font-black tracking-tight text-charcoal leading-none">Paths That Fit You</h1>
-        <p className="mt-2 text-[14px] font-black uppercase tracking-[0.25em] text-charcoal/30">DISCOVER YOUR FUTURE</p>
+    <div className="flex h-full min-h-0 flex-col bg-brand-cream px-screen pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[max(2.5rem,env(safe-area-inset-top))] text-center">
+      <div className="mb-5">
+        <h1 className="text-[30px] font-black leading-none tracking-tight text-charcoal">Paths That Fit You</h1>
+        <p className="mt-2 text-[12px] font-black uppercase tracking-[0.22em] text-charcoal/30">Explore your options</p>
       </div>
 
-      <div className="flex justify-center gap-1.5 mb-6">
+      <div className="mb-4 flex justify-center gap-1.5">
         {displayCareers.slice(0, 10).map((item, index) => (
           <button
             key={getCareerId(item)}
@@ -103,10 +103,10 @@ export function RecommendationDeck() {
         {displayCareers.length > 10 && <span className="text-[10px] font-black text-charcoal/20">+{displayCareers.length - 10}</span>}
       </div>
 
-      <div className="relative mt-2 flex-1">
+      <div className="relative min-h-0 flex-1">
         {/* Background Overlays */}
-        <div className="absolute inset-x-[12px] top-10 h-[580px] rounded-[32px] border border-charcoal/5 bg-charcoal/5 -rotate-1" />
-        <div className="absolute inset-x-[6px] top-5 h-[600px] rounded-[32px] border border-charcoal/10 bg-white/40 rotate-1" />
+        <div className="absolute inset-x-[12px] top-8 h-[520px] rounded-[32px] border border-charcoal/5 bg-charcoal/5 -rotate-1" />
+        <div className="absolute inset-x-[6px] top-4 h-[540px] rounded-[32px] border border-charcoal/10 bg-white/40 rotate-1" />
         
         <motion.div
           key={getCareerId(career)}
@@ -130,7 +130,7 @@ export function RecommendationDeck() {
         </motion.div>
       </div>
 
-      <div className="mt-8 flex items-center justify-between text-charcoal px-4">
+      <div className="mt-5 flex items-center justify-between px-4 text-charcoal">
         <button
           type="button"
           aria-label="Previous career"

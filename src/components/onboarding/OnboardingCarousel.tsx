@@ -26,22 +26,18 @@ const slideText: Record<string, { title: string; description: string }> = {
   },
 };
 
-const visualStyles: Record<string, { stage: string; image: string }> = {
+const visualStyles: Record<string, { image: string }> = {
   discover: {
-    stage: "items-end pb-0",
-    image: "h-[430px] max-h-full w-[330px] max-w-[92%]",
+    image: "h-[330px] w-[310px] max-w-[88%]",
   },
   explore: {
-    stage: "items-center pb-8",
-    image: "h-[300px] max-h-full w-[300px] max-w-[78%]",
+    image: "h-[300px] w-[300px] max-w-[80%]",
   },
   roadmap: {
-    stage: "items-end pb-5",
-    image: "h-[365px] max-h-full w-[345px] max-w-[92%]",
+    image: "h-[320px] w-[330px] max-w-[90%]",
   },
   sparki: {
-    stage: "items-end pb-8",
-    image: "h-[355px] max-h-full w-[345px] max-w-[92%]",
+    image: "h-[315px] w-[330px] max-w-[88%]",
   },
 };
 
@@ -78,7 +74,7 @@ export function OnboardingCarousel() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-white">
-      <div className={`relative flex h-[55%] min-h-[300px] justify-center overflow-hidden bg-[linear-gradient(180deg,#ffd72a_0%,#ffd51f_76%,#ffcf00_100%)] px-5 ${visual.stage}`}>
+      <div className="relative flex h-[52%] min-h-[320px] items-end justify-center overflow-hidden bg-[linear-gradient(180deg,#ffdd3d_0%,#ffd51f_76%,#ffcf00_100%)] px-5 pb-5">
         <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:repeating-linear-gradient(108deg,rgba(255,255,255,0.24)_0,rgba(255,255,255,0.24)_1px,transparent_1px,transparent_7px)]" />
         <AnimatePresence mode="wait">
           <motion.div
@@ -105,7 +101,7 @@ export function OnboardingCarousel() {
         </AnimatePresence>
       </div>
 
-      <section className="relative flex flex-1 flex-col bg-white px-[22px] pb-[max(2.1rem,env(safe-area-inset-bottom))] pt-7">
+      <section className="relative flex min-h-0 flex-1 flex-col bg-white px-[22px] pb-[max(1.6rem,env(safe-area-inset-bottom))] pt-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={`${currentSlide.id}-copy`}
@@ -113,18 +109,18 @@ export function OnboardingCarousel() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3 }}
-            className="min-h-[126px]"
+            className="min-h-[154px]"
           >
-            <h1 className="max-w-[330px] text-left text-[32px] font-black leading-[1.12] text-[#111827]">
+            <h1 className="max-w-[330px] text-left text-[29px] font-black leading-[1.12] text-[#111827]">
               {copy.title}
             </h1>
-            <p className="mt-4 max-w-[330px] text-left text-[17px] font-normal leading-[1.45] text-[#6b7280]">
+            <p className="mt-4 max-w-[330px] text-left text-[16px] font-normal leading-[1.45] text-[#6b7280]">
               {copy.description}
             </p>
           </motion.div>
         </AnimatePresence>
 
-        <div className="mt-2 flex justify-center gap-2">
+        <div className="mt-auto flex justify-center gap-2 pt-3">
           {carouselSlides.map((_, index) => (
             <button
               key={index}

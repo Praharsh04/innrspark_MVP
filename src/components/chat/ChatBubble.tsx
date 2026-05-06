@@ -7,26 +7,26 @@ export function ChatBubble({ message }: { message: ChatMessage }) {
   const isAssistant = message.role === "assistant";
 
   return (
-    <div className={`mb-5 flex w-full ${isAssistant ? "justify-start" : "justify-end"}`}>
+    <div className={`mb-4 flex w-full ${isAssistant ? "justify-start" : "justify-end"}`}>
       <div
-        className={`max-w-[88%] rounded-[24px] px-5 py-3.5 text-[16px] font-bold leading-relaxed shadow-sm border ${
+        className={`max-w-[90%] overflow-hidden rounded-[24px] border px-4 py-3.5 text-[15px] font-bold leading-relaxed shadow-sm ${
           isAssistant
             ? "rounded-tl-none bg-white text-charcoal border-charcoal/5"
             : "rounded-tr-none bg-brand-yellow text-charcoal border-charcoal/10"
         }`}
       >
-        <p>{message.content}</p>
+        <p className="break-words">{message.content}</p>
         {isAssistant && message.resources && message.resources.length > 0 && (
           <div className="mt-4 space-y-3">
             {message.resources.map((resource) => (
               <article
                 key={resource.url}
-                className="rounded-2xl border border-charcoal/10 bg-brand-cream/70 p-4 text-left"
+                className="rounded-2xl border border-charcoal/10 bg-brand-cream/70 p-3.5 text-left"
               >
                 <p className="text-[11px] font-black uppercase tracking-[0.18em] text-charcoal/35">
                   {resource.source}
                 </p>
-                <h3 className="mt-1 text-[15px] font-black leading-snug text-charcoal">{resource.title}</h3>
+                <h3 className="mt-1 break-words text-[15px] font-black leading-snug text-charcoal">{resource.title}</h3>
                 <p className="mt-2 text-[13px] font-semibold leading-snug text-charcoal/55">{resource.snippet}</p>
                 <p className="mt-3 rounded-xl bg-white/70 px-3 py-2 text-[12px] font-bold leading-snug text-charcoal/60">
                   {resource.whyRecommended}

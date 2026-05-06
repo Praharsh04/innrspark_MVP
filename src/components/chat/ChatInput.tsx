@@ -20,10 +20,10 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   };
 
   return (
-    <div className="absolute inset-x-0 bottom-[104px] z-20 px-screen pb-4">
+    <div className="absolute inset-x-0 bottom-[calc(5.9rem+env(safe-area-inset-bottom))] z-20 px-screen pb-3">
       <form
         onSubmit={handleSubmit}
-        className="flex items-center gap-2 rounded-[32px] border border-charcoal/15 bg-white/80 p-2 shadow-premium backdrop-blur-xl transition-all focus-within:border-brand-yellow/50"
+        className="flex items-center gap-2 rounded-[28px] border border-charcoal/15 bg-white/88 p-2 shadow-premium backdrop-blur-xl transition-all focus-within:border-brand-yellow/50"
       >
         <button
           type="button"
@@ -37,7 +37,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask Sparki"
-          className="h-11 w-full bg-transparent px-2 text-[16px] font-bold text-charcoal placeholder:text-charcoal/30 focus:outline-none"
+          className="h-11 min-w-0 flex-1 bg-transparent px-2 text-[16px] font-bold text-charcoal placeholder:text-charcoal/30 focus:outline-none"
           disabled={disabled}
         />
 

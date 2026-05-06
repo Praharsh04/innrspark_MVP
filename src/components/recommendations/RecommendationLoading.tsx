@@ -1,31 +1,38 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
 
 export function RecommendationLoading() {
   return (
-    <div className="flex h-full flex-col items-center justify-center bg-brand-cream px-screen text-center">
-      <div className="relative mb-12 flex h-24 w-24 items-center justify-center">
+    <div className="flex h-full flex-col items-center justify-center bg-[linear-gradient(180deg,#fff2a8_0%,#fffbea_55%,#fffef8_100%)] px-screen text-center">
+      <div className="relative mb-10 flex h-28 w-28 items-center justify-center">
         <motion.div
-          className="absolute h-full w-full rounded-full border-4 border-brand-yellow/20"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          className="absolute inset-0 rounded-[36px] border border-charcoal/10 bg-white/50 shadow-[0_20px_42px_rgba(255,199,0,0.18)] backdrop-blur"
+          animate={{ scale: [1, 1.025, 1] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute h-full w-full rounded-full border-4 border-brand-yellow border-t-transparent"
+          className="absolute h-20 w-20 rounded-full border-2 border-dashed border-charcoal/25"
           animate={{ rotate: 360 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
         />
-        <div className="h-12 w-12 rounded-full bg-brand-yellow shadow-[0_0_20px_rgba(255,212,0,0.4)]" />
+        <motion.div
+          className="relative grid h-14 w-14 place-items-center rounded-2xl bg-brand-yellow text-charcoal shadow-button"
+          animate={{ y: [0, -4, 0], rotate: [-2, 2, -2] }}
+          transition={{ duration: 2.1, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <Sparkles size={26} strokeWidth={2.6} />
+        </motion.div>
       </div>
 
       <motion.h2 
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="max-w-[300px] text-[22px] font-black leading-tight text-charcoal tracking-tight"
+        className="max-w-[300px] text-[22px] font-black leading-tight tracking-tight text-charcoal"
       >
-        Finding your perfect fit...
+        Mapping your strongest career signals
       </motion.h2>
       
       <motion.p
@@ -34,7 +41,7 @@ export function RecommendationLoading() {
         transition={{ delay: 0.5 }}
         className="mt-4 text-[13px] font-black uppercase tracking-[0.2em] text-charcoal/30"
       >
-        mapping your strengths and preferences.
+        comparing strengths, traits, and fit
       </motion.p>
     </div>
   );
