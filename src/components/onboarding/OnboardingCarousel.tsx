@@ -27,6 +27,9 @@ const slideText: Record<string, { title: string; description: string }> = {
 };
 
 const visualStyles: Record<string, { image: string }> = {
+  welcome: {
+    image: "h-[260px] w-[260px] max-w-[80%]",
+  },
   discover: {
     image: "h-[330px] w-[310px] max-w-[88%]",
   },
@@ -46,8 +49,8 @@ export function OnboardingCarousel() {
   const { currentIndex, nextSlide, setIndex } = useOnboardingStore();
   const didReset = useRef(false);
   
-  // Skip the first slide (id: "welcome") as it's for the splash screen
-  const carouselSlides = onboardingSlides.slice(1);
+  // Include all slides including the first one
+  const carouselSlides = onboardingSlides;
   const totalSlides = carouselSlides.length;
   const safeIndex = Math.min(Math.max(currentIndex, 0), totalSlides - 1);
   const currentSlide = carouselSlides[safeIndex] || carouselSlides[0];

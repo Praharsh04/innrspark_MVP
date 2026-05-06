@@ -1,5 +1,10 @@
-import { redirect } from "next/navigation";
+import { MobileShell } from "@/components/MobileShell";
+import { OnboardingCarousel } from "@/components/onboarding/OnboardingCarousel";
 
 export default function HomePage() {
-  redirect("/onboarding");
+  return (
+    <MobileShell>
+      <OnboardingCarousel />
+    </MobileShell>
+  );
 }
