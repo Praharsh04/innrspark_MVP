@@ -5,6 +5,7 @@ import type {
   ChatbotMessage,
   ChatbotRoadmapSummary,
   ChatbotTaskSummary,
+  CompactChatbotContext,
 } from "./types";
 
 type Client = SupabaseClient<Database>;
@@ -62,25 +63,24 @@ export async function buildChatbotContext(supabase: Client, userId: string): Pro
     throw roadmapResult.error;
   }
 
-  if (!roadmapResult.data) {
-    return null;
-  }
+  const progressResult = roadmapResult.data
+    ? await supabase
+        .from("roadmap_progress")
+        .select("task_id, completed")
+        .eq("user_id", userId)
+        .eq("roadmap_id", roadmapResult.data.id)
+    : null;
 
-  const progressResult = await supabase
-    .from("roadmap_progress")
-    .select("task_id, completed")
-    .eq("user_id", userId)
-    .eq("roadmap_id", roadmapResult.data.id);
-
-  if (progressResult.error) {
+  if (progressResult?.error) {
     throw progressResult.error;
   }
 
-  const progressByTaskId = new Map((progressResult.data ?? []).map((row) => [row.task_id, row.completed]));
-  const tasks = extractTasks(roadmapResult.data.roadmap, progressByTaskId);
+  const roadmap = roadmapResult.data?.roadmap ?? null;
+  const progressByTaskId = new Map((progressResult?.data ?? []).map((row) => [row.task_id, row.completed]));
+  const tasks = extractTasks(roadmap, progressByTaskId);
   const completedTasks = tasks.filter((task) => task.completed);
   const incompleteTasks = tasks.filter((task) => !task.completed);
-  const currentMilestone = findCurrentMilestone(roadmapResult.data.roadmap, incompleteTasks[0]?.milestoneId);
+  const currentMilestone = findCurrentMilestone(roadmap, incompleteTasks[0]?.milestoneId);
 
   return {
     userProfile: profileResult.data?.profile ?? null,
@@ -92,7 +92,7 @@ export async function buildChatbotContext(supabase: Client, userId: string): Pro
           selection: selectedCareerResult.data.selection,
         }
       : null,
-    roadmapSummary: buildRoadmapSummary(roadmapResult.data.id, roadmapResult.data.roadmap, tasks, completedTasks),
+    roadmapSummary: buildRoadmapSummary(roadmapResult.data?.id ?? "", roadmap, tasks, completedTasks),
     completedTasks,
     incompleteTasks,
     currentMilestone,
@@ -100,24 +100,50 @@ export async function buildChatbotContext(supabase: Client, userId: string): Pro
   };
 }
 
+export function buildCompactChatbotContext(params: {
+  context: ChatbotContext | null;
+  clientHistory?: unknown;
+}): CompactChatbotContext {
+  const context = params.context;
+  const lastUserMessages = [
+    ...extractLastUserMessages(context?.recentChatHistory ?? [], 3),
+    ...extractLastUserMessagesFromClient(params.clientHistory, 2),
+  ].slice(-5);
+  const topStrengths = extractTopStrengths(context?.psychometricProfile).slice(0, 4);
+
+  return {
+    selectedCareer: context?.selectedCareer?.title ?? context?.roadmapSummary?.careerTitle ?? "",
+    currentMilestone: context?.currentMilestone?.title ?? "",
+    nextIncompleteTask: context?.incompleteTasks?.[0]?.title ?? "",
+    upcomingTasks: context?.incompleteTasks?.slice(0, 3).map((task) => task.title) ?? [],
+    completedTaskCount: context?.roadmapSummary?.completedTaskCount ?? context?.completedTasks?.length ?? 0,
+    totalTaskCount: context?.roadmapSummary?.taskCount ?? 0,
+    topStrengths,
+    learningStyle: readStringField(context?.psychometricProfile ?? {}, "learningStyle") ?? "",
+    motivationStyle: readStringField(context?.psychometricProfile ?? {}, "motivationStyle") ?? "",
+    recentConversationSummary: summarizeConversation(lastUserMessages),
+    lastUserMessages,
+  };
+}
+
 function buildRoadmapSummary(
   roadmapId: string,
-  roadmap: Json,
+  roadmap: Json | null,
   tasks: ChatbotTaskSummary[],
   completedTasks: ChatbotTaskSummary[],
 ): ChatbotRoadmapSummary {
-  const milestones = readField(roadmap, "milestones");
+  const milestones = readField(roadmap ?? {}, "milestones");
 
   return {
     id: roadmapId,
-    careerTitle: readStringField(roadmap, "careerTitle") ?? "Selected career",
+    careerTitle: readStringField(roadmap ?? {}, "careerTitle") ?? "Selected career",
     milestoneCount: Array.isArray(milestones) ? milestones.length : 0,
     taskCount: tasks.length,
     completedTaskCount: completedTasks.length,
   };
 }
 
-function extractTasks(roadmap: Json, progressByTaskId: Map<string, boolean>): ChatbotTaskSummary[] {
+function extractTasks(roadmap: Json | null, progressByTaskId: Map<string, boolean>): ChatbotTaskSummary[] {
   const milestones = readField(roadmap, "milestones");
 
   if (!Array.isArray(milestones)) {
@@ -160,7 +186,7 @@ function extractTasks(roadmap: Json, progressByTaskId: Map<string, boolean>): Ch
   });
 }
 
-function findCurrentMilestone(roadmap: Json, milestoneId?: string) {
+function findCurrentMilestone(roadmap: Json | null, milestoneId?: string) {
   if (!milestoneId) {
     return null;
   }
@@ -206,4 +232,65 @@ function readStringField(value: Json | Record<string, unknown>, key: string): st
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function extractTopStrengths(profile: Json | null | undefined): string[] {
+  if (!isRecord(profile)) {
+    return [];
+  }
+
+  const strengths = profile.strengths;
+
+  if (Array.isArray(strengths)) {
+    return strengths.filter((item): item is string => typeof item === "string");
+  }
+
+  const traits = profile.traits;
+
+  if (Array.isArray(traits)) {
+    return traits
+      .flatMap((trait) => {
+        if (!isRecord(trait)) {
+          return [];
+        }
+
+        const label = readStringField(trait, "label") ?? readStringField(trait, "traitId");
+        return label ? [label.replace(/_/g, " ")] : [];
+      })
+      .slice(0, 4);
+  }
+
+  return [];
+}
+
+function extractLastUserMessages(messages: ChatbotMessage[], limit: number): string[] {
+  return messages
+    .filter((message) => message.role === "user")
+    .map((message) => message.content)
+    .filter(Boolean)
+    .slice(-limit);
+}
+
+function extractLastUserMessagesFromClient(history: unknown, limit: number): string[] {
+  if (!Array.isArray(history)) {
+    return [];
+  }
+
+  return history
+    .flatMap((item) => {
+      if (!isRecord(item) || item.role !== "user" || typeof item.content !== "string") {
+        return [];
+      }
+
+      return [item.content];
+    })
+    .slice(-limit);
+}
+
+function summarizeConversation(messages: string[]): string {
+  if (messages.length === 0) {
+    return "";
+  }
+
+  return messages.map((message) => `- ${message.slice(0, 120)}`).join("\n");
 }

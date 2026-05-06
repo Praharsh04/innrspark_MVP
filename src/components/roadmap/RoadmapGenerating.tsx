@@ -20,7 +20,7 @@ export function RoadmapGenerating() {
   }, [loadMockRoadmap, router]);
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-[linear-gradient(180deg,#ffdf47_0%,#fff7bd_48%,#fffdf0_100%)] px-8 text-center">
+    <div className="flex h-full flex-col items-center justify-center bg-[linear-gradient(180deg,#ffdf47_0%,#fff7bd_48%,#fffdf0_100%)] px-8 text-center">
       <div className="mb-28 flex flex-col items-center">
         <motion.div
           className="relative grid h-36 w-36 place-items-center rounded-full border border-charcoal/10 bg-white/35 shadow-[0_22px_42px_rgba(255,193,7,0.24)] backdrop-blur-sm"

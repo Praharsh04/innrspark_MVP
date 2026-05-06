@@ -25,7 +25,7 @@ export default function ProgressPage() {
 
   return (
     <MobileShell withBottomNav>
-      <div className="flex min-h-dvh flex-col px-screen pt-12">
+      <div className="flex h-full flex-col px-screen pt-12 overflow-y-auto no-scrollbar pb-32">
         <h1 className="text-[34px] font-black tracking-tight text-charcoal leading-none">Your Progress</h1>
         <p className="mt-4 text-[17px] font-bold text-charcoal/50 leading-relaxed">Keep going! You&apos;re making great strides.</p>
 

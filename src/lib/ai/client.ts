@@ -21,6 +21,7 @@ type JsonModelCallOptions<T> = {
   temperature?: number;
   maxOutputTokens?: number;
   jsonSchema?: JsonSchemaFormat;
+  retryInvalidJson?: boolean;
 };
 
 export type JsonModelCallResult<T> = {
@@ -43,7 +44,10 @@ export async function callJsonModel<T>(options: JsonModelCallOptions<T>): Promis
   } catch (firstError) {
     const retryableError = toAiError(firstError);
 
-    if (retryableError.code === "AI_INVALID_JSON" || retryableError.code === "AI_VALIDATION_FAILED") {
+    if (
+      options.retryInvalidJson !== false &&
+      (retryableError.code === "AI_INVALID_JSON" || retryableError.code === "AI_VALIDATION_FAILED")
+    ) {
       try {
         const data = await requestValidatedJson({
           ...options,

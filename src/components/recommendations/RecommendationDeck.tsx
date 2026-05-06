@@ -41,6 +41,10 @@ function toCareerCardData(career: DisplayCareer): CareerCardData {
       richCareer?.hook ??
       "A practical career path worth exploring.",
     badges,
+    reason:
+      ("reason" in career ? career.reason : undefined) ??
+      richCareer?.reason ??
+      "This role combines decision-making, problem solving, and communication in a way that can grow with your strengths.",
     description:
       ("description" in career ? career.description : undefined) ??
       richCareer?.description ??
@@ -80,7 +84,7 @@ export function RecommendationDeck() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col px-screen pb-[max(2rem,env(safe-area-inset-bottom))] pt-12 text-center bg-brand-cream">
+    <div className="flex h-full flex-col px-screen pb-[max(2rem,env(safe-area-inset-bottom))] pt-12 text-center bg-brand-cream">
       <div className="mb-8">
         <h1 className="text-[32px] font-black tracking-tight text-charcoal leading-none">Paths That Fit You</h1>
         <p className="mt-2 text-[14px] font-black uppercase tracking-[0.25em] text-charcoal/30">DISCOVER YOUR FUTURE</p>

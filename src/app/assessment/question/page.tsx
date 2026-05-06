@@ -70,7 +70,7 @@ export default function AssessmentQuestionPage() {
 
   return (
     <MobileShell>
-      <div className="flex min-h-dvh flex-col px-[18px] pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[58px]">
+      <div className="flex h-full flex-col px-[18px] pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[58px]">
         <div className="flex items-center gap-5 pb-3">
           <button 
             onClick={handleBack}

@@ -77,8 +77,8 @@ export function OnboardingCarousel() {
   };
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-hidden bg-white">
-      <div className={`relative flex h-[60dvh] min-h-[390px] max-h-[560px] justify-center overflow-hidden bg-[linear-gradient(180deg,#ffd72a_0%,#ffd51f_76%,#ffcf00_100%)] px-5 ${visual.stage}`}>
+    <div className="flex h-full flex-col overflow-hidden bg-white">
+      <div className={`relative flex h-[55%] min-h-[300px] justify-center overflow-hidden bg-[linear-gradient(180deg,#ffd72a_0%,#ffd51f_76%,#ffcf00_100%)] px-5 ${visual.stage}`}>
         <div className="pointer-events-none absolute inset-0 opacity-[0.18] [background-image:repeating-linear-gradient(108deg,rgba(255,255,255,0.24)_0,rgba(255,255,255,0.24)_1px,transparent_1px,transparent_7px)]" />
         <AnimatePresence mode="wait">
           <motion.div

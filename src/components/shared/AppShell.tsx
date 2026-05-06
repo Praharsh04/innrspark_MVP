@@ -17,7 +17,7 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <MobileFrame className={className} padded={false}>
-      <div className={`min-h-dvh px-6 py-6 ${showBottomNav ? "pb-28" : "pb-8"} ${contentClassName}`}>
+      <div className={`h-full px-6 py-6 ${showBottomNav ? "pb-28" : "pb-8"} ${contentClassName}`}>
         {children}
       </div>
       {showBottomNav && <BottomNav />}

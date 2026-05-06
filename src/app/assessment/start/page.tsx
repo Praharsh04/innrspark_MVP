@@ -16,7 +16,7 @@ export default function AssessmentStartPage() {
 
   return (
     <MobileShell>
-      <div className="flex min-h-dvh flex-col px-[15px] pb-[max(2.25rem,env(safe-area-inset-bottom))] pt-[31vh] text-center">
+      <div className="flex h-full flex-col px-[15px] pb-[max(2.25rem,env(safe-area-inset-bottom))] pt-[25%] text-center">
         <h1 className="text-[25px] font-black leading-tight text-charcoal">
             Let’s start your journey
         </h1>

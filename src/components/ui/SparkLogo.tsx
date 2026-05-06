@@ -1,15 +1,27 @@
 import Image from "next/image";
 
-export function SparkLogo({ small = false }: { small?: boolean }) {
+type SparkLogoProps = {
+  small?: boolean;
+  hero?: boolean;
+  className?: string;
+};
+
+export function SparkLogo({
+  small = false,
+  hero = false,
+  className = "",
+}: SparkLogoProps) {
+  const size = small ? 72 : hero ? 300 : 180;
+
   return (
-    <div className="relative flex items-center justify-center">
+    <div className={`relative flex items-center justify-center ${className}`}>
       <Image
-        src="/assets/onboarding/slide_1_logo.png"
+        src="/assets/onboarding/slide1_logo.png"
         alt="Innrspark"
-        width={small ? 82 : 205}
-        height={small ? 92 : 228}
+        width={size}
+        height={size}
         priority
-        className="object-contain"
+        className="h-auto w-full object-contain"
       />
     </div>
   );

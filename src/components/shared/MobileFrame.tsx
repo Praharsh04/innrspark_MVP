@@ -8,13 +8,13 @@ type MobileFrameProps = {
 
 export function MobileFrame({ children, className = "", padded = true }: MobileFrameProps) {
   return (
-    <main className="app-shell min-h-dvh w-full text-brand-black sm:grid sm:place-items-center sm:bg-[#f2f0e4] sm:p-4">
+    <main className="min-h-dvh bg-[#F2F0E4] text-charcoal sm:flex sm:items-center sm:justify-center sm:p-6 md:p-8">
       <section
-        className={`mobile-screen relative overflow-hidden sm:min-h-[844px] sm:rounded-[32px] sm:shadow-[0_18px_44px_rgba(33,33,33,0.14)] sm:ring-1 sm:ring-brand-black/10 ${
-          padded ? "px-6 py-6" : ""
-        } ${className}`}
+        className={`relative mx-auto flex h-full min-h-dvh w-full max-w-[440px] flex-col overflow-hidden bg-brand-cream shadow-none ring-0 sm:h-[844px] sm:min-h-0 sm:rounded-[32px] sm:shadow-premium sm:ring-1 sm:ring-charcoal/5 ${className}`}
       >
-        {children}
+        <div className={`relative flex-1 overflow-y-auto no-scrollbar ${padded ? "px-6 py-6" : ""}`}>
+          {children}
+        </div>
       </section>
     </main>
   );

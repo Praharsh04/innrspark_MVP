@@ -1,10 +1,10 @@
 import { create } from "zustand";
-import { ChatMessage } from "@/types/chat";
+import { ChatLearningResource, ChatMessage, ChatVideoResource } from "@/types/chat";
 import { mockChatMessages } from "@/data/mockChat";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 const CHAT_FALLBACK_MESSAGE =
-  "I'm having trouble connecting right now, but I can still help you think through your next step. Try asking again in a moment.";
+  "I'm having trouble connecting right now. Try again in a moment, or tell me your goal and I'll help you break it down.";
 
 type ChatState = {
   messages: ChatMessage[];
@@ -80,12 +80,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
       error: null,
     }));
 
-    const apiResponse = await sendMessageToApi(trimmedContent, get().messages.slice(-10));
+    const apiResponse = await sendMessageToApi(trimmedContent, get().messages.slice(-5));
     const assistantMessage: ChatMessage = {
       id: (Date.now() + 1).toString(),
       role: "assistant",
       content: apiResponse.message,
       createdAt: new Date().toISOString(),
+      responseType: apiResponse.type,
+      resources: apiResponse.resources,
+      videos: apiResponse.videos,
     };
 
     set((state) => ({
@@ -100,7 +103,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
 async function sendMessageToApi(
   content: string,
   history: ChatMessage[],
-): Promise<{ message: string; error: string | null }> {
+): Promise<{
+  message: string;
+  error: string | null;
+  type: "chat" | "web_resources" | "video_recommendations";
+  resources?: ChatLearningResource[];
+  videos?: ChatVideoResource[];
+}> {
   const supabase = getSupabaseBrowserClient();
   const accessToken = supabase ? (await supabase.auth.getSession()).data.session?.access_token : null;
 
@@ -121,7 +130,7 @@ async function sendMessageToApi(
       };
     }
 
-    const payload = (await response.json()) as { reply?: string; message?: string; usedFallback?: boolean };
+    const payload = (await response.json()) as ChatApiPayload;
     const message = payload.reply ?? payload.message;
 
     if (!message) {
@@ -131,7 +140,13 @@ async function sendMessageToApi(
       };
     }
 
-    return { message, error: null };
+    return {
+      message,
+      error: null,
+      type: payload.type ?? "chat",
+      resources: payload.resources,
+      videos: payload.videos,
+    };
   } catch {
     return {
       ...mockAssistantReply(),
@@ -144,5 +159,15 @@ function mockAssistantReply() {
   return {
     message: CHAT_FALLBACK_MESSAGE,
     error: null,
+    type: "chat" as const,
   };
 }
+
+type ChatApiPayload = {
+  type?: "chat" | "web_resources" | "video_recommendations";
+  reply?: string;
+  message?: string;
+  usedFallback?: boolean;
+  resources?: ChatLearningResource[];
+  videos?: ChatVideoResource[];
+};

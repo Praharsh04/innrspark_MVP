@@ -33,6 +33,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 NEXT_PUBLIC_SITE_URL=
 GEMINI_API_KEY=
 GOOGLE_API_KEY=
+TAVILY_API_KEY=
+YOUTUBE_API_KEY=
 GEMINI_MODEL=
 ```
 
@@ -43,6 +45,8 @@ Notes:
 - `NEXT_PUBLIC_SITE_URL` should be your deployed app URL, for example `https://your-app.vercel.app`.
 - `GEMINI_API_KEY` is the preferred server-side Google AI key.
 - `GOOGLE_API_KEY` is supported as a server-side fallback.
+- `TAVILY_API_KEY` enables Sparki to recommend live web learning resources in chat.
+- `YOUTUBE_API_KEY` enables embedded YouTube recommendations when users explicitly ask for videos.
 - Never prefix AI keys with `NEXT_PUBLIC_`.
 - `GEMINI_MODEL` is optional and defaults to `gemini-2.5-flash`.
 
@@ -78,6 +82,22 @@ GOOGLE_API_KEY=
 ```
 
 If the key is missing or invalid, Sparki returns a friendly fallback message instead of crashing.
+
+For learning resource recommendations, set:
+
+```bash
+TAVILY_API_KEY=
+```
+
+Sparki uses Tavily only on server-side chat requests when the user asks for learning resources, guides, tutorials, courses, docs, or references.
+
+For video recommendations, set:
+
+```bash
+YOUTUBE_API_KEY=
+```
+
+YouTube is used only when the user explicitly asks for YouTube, videos, playlists, channels, or things to watch.
 
 ## Vercel Deployment
 

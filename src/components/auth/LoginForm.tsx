@@ -58,7 +58,7 @@ export function LoginForm() {
   };
 
   return (
-    <div className="flex flex-col min-h-dvh px-screen pb-[max(2rem,env(safe-area-inset-bottom))] pt-12 bg-brand-cream">
+    <div className="flex flex-col h-full px-screen pb-[max(2rem,env(safe-area-inset-bottom))] pt-12 bg-brand-cream">
       <div className="mb-14 flex justify-center">
         <SparkLogo small />
       </div>
@@ -136,6 +136,7 @@ export function LoginForm() {
       </div>
 
       <button
+        type="button"
         onClick={handleGoogleLogin}
         disabled={isLoading}
         className="flex min-h-[60px] w-full items-center justify-center gap-4 rounded-2xl border border-charcoal/15 bg-white px-6 shadow-sm transition active:scale-[0.97] hover:bg-neutral-50"

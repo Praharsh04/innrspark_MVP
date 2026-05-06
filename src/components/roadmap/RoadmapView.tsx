@@ -58,7 +58,7 @@ export function RoadmapView() {
   };
 
   return (
-    <div className="relative flex min-h-dvh flex-col bg-brand-cream">
+    <div className="relative flex h-full flex-col bg-brand-cream">
       {/* Fixed Header */}
       <header className="sticky top-0 z-20 flex flex-col items-center justify-center bg-brand-cream/80 backdrop-blur-md px-6 py-6 border-b border-charcoal/5">
         <h1 className="text-[11px] font-black uppercase tracking-[0.3em] text-charcoal/30">Your Journey to</h1>

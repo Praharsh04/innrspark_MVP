@@ -1,6 +1,6 @@
 export const assets = {
   onboarding: {
-    slide1Logo: "/assets/onboarding/slide_1_logo.png",
+    slide1Logo: "/assets/onboarding/slide1_logo.png",
     slide2Doodle: "/assets/onboarding/slide_2_doodle_man.png",
     slide3Magnifier: "/assets/onboarding/slide_3_magnifineglass.png",
     slide4Scientist: "/assets/onboarding/slide_4_scintistdoodle.png",
