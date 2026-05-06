@@ -23,6 +23,13 @@ export function LoginForm() {
   const isSignUp = authMode === "signUp";
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const callbackError = params.get("error");
+
+    if (callbackError) {
+      setFormNotice(callbackError);
+    }
+
     hydrateFromSupabase().then((hasSession) => {
       if (hasSession) {
         router.push("/assessment/start");
@@ -42,8 +49,7 @@ export function LoginForm() {
 
   const handleGoogleLogin = async () => {
     setFormNotice(null);
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "") || window.location.origin;
-    const redirectTo = `${siteUrl}/auth/callback`;
+    const redirectTo = `${window.location.origin}/auth/callback`;
     const started = await loginWithGoogle(redirectTo);
 
     if (started && useUserStore.getState().isLoggedIn) {

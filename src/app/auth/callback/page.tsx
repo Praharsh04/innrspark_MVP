@@ -18,7 +18,7 @@ export default function AuthCallbackPage() {
       const supabase = getSupabaseBrowserClient();
 
       if (!supabase) {
-        setMessage("Supabase is not configured yet. Check your environment variables.");
+        redirectToAuthError("Supabase is not configured yet. Check your environment variables.");
         return;
       }
 
@@ -27,7 +27,7 @@ export default function AuthCallbackPage() {
       const error = params.get("error_description") || params.get("error");
 
       if (error) {
-        setMessage(error);
+        redirectToAuthError(error);
         return;
       }
 
@@ -35,23 +35,33 @@ export default function AuthCallbackPage() {
         const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
 
         if (exchangeError) {
-          setMessage(exchangeError.message);
+          redirectToAuthError(exchangeError.message);
           return;
         }
       } else {
         const { data } = await supabase.auth.getSession();
 
         if (!data.session) {
-          setMessage("Google sign in did not return a session. Please try again.");
+          redirectToAuthError("Google sign in did not return a session. Please try again.");
           return;
         }
       }
 
+      setMessage("Session created. Preparing your Innrspark workspace...");
       const hasSession = await hydrateFromSupabase();
 
       if (!cancelled) {
         router.replace(hasSession ? "/assessment/start" : "/auth");
       }
+    }
+
+    function redirectToAuthError(error: string) {
+      if (cancelled) {
+        return;
+      }
+
+      const message = encodeURIComponent(cleanAuthError(error));
+      router.replace(`/auth?error=${message}`);
     }
 
     finishAuth();
@@ -72,4 +82,12 @@ export default function AuthCallbackPage() {
       </div>
     </MobileFrame>
   );
+}
+
+function cleanAuthError(error: string): string {
+  if (error.toLowerCase().includes("auth session missing")) {
+    return "Google sign in could not be completed. Please try again.";
+  }
+
+  return error || "Google sign in could not be completed. Please try again.";
 }

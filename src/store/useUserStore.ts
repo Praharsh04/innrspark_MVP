@@ -61,18 +61,26 @@ export const useUserStore = create<UserState>((set) => ({
       return false;
     }
 
-    if (result.error) {
-      set({ isLoading: false, error: result.error });
-      return false;
-    }
-
-    if (!result.data) {
+    if (result.error || !result.data) {
       const userResult = await getCurrentUserProfile();
 
       if (!userResult.data) {
-        set({ isLoading: false });
+        set({ isLoading: false, error: result.error ?? userResult.error });
         return false;
       }
+
+      set({
+        isLoggedIn: true,
+        isLoading: false,
+        user: {
+          id: userResult.data.id,
+          email: userResult.data.email ?? undefined,
+          name: userResult.data.name ?? undefined,
+        },
+        error: result.error,
+      });
+
+      return true;
     }
 
     const profile = result.data;

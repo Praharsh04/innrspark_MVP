@@ -43,6 +43,7 @@ Notes:
 - `NEXT_PUBLIC_SUPABASE_URL` should be the Supabase project root URL, for example `https://your-project-ref.supabase.co`.
 - Do not use the Supabase REST endpoint ending in `/rest/v1`.
 - `NEXT_PUBLIC_SITE_URL` should be your deployed app URL, for example `https://your-app.vercel.app`.
+  The Google button uses the current browser origin for OAuth callbacks, so local development returns to `http://localhost:3000/auth/callback`.
 - `GEMINI_API_KEY` is the preferred server-side Google AI key.
 - `GOOGLE_API_KEY` is supported as a server-side fallback.
 - `TAVILY_API_KEY` enables Sparki to recommend live web learning resources in chat.
@@ -68,6 +69,7 @@ Required Supabase auth setup:
   - `https://your-app.vercel.app/auth/callback`
 - In Google Cloud OAuth settings, add Supabase's provider callback URL:
   - `https://your-project-ref.supabase.co/auth/v1/callback`
+- If you test from a different local port or Vercel preview URL, add that exact `/auth/callback` URL to Supabase too.
 
 The app keeps a local/mock fallback when Supabase environment variables are missing.
 

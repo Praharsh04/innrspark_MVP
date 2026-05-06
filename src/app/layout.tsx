@@ -20,8 +20,8 @@ export const metadata: Metadata = {
     title: "Innrspark",
   },
   icons: {
-    icon: "/icons/icon.png",
-    apple: "/icons/icon.png",
+    icon: "/icons/icon-512.png",
+    apple: "/icons/apple-touch-icon.png",
   },
 };
 

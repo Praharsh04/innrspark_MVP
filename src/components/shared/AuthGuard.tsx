@@ -16,7 +16,7 @@ const protectedRoutes = [
   "/profile",
 ];
 
-const publicRoutes = ["/", "/onboarding", "/auth"];
+const publicRoutes = ["/", "/onboarding", "/auth", "/auth/callback"];
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
