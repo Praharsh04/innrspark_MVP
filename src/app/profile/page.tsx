@@ -17,7 +17,6 @@ import {
   X,
 } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
-import { BottomNav } from "@/components/shared/BottomNav";
 import { useAssessmentStore } from "@/store/useAssessmentStore";
 import { useRoadmapStore } from "@/store/useRoadmapStore";
 import { useUserStore } from "@/store/useUserStore";
@@ -63,7 +62,7 @@ export default function ProfilePage() {
 
   return (
     <MobileShell withBottomNav>
-      <div className="flex h-full flex-col overflow-y-auto bg-[linear-gradient(180deg,#fff7ce_0%,#fffdf4_42%,#fff9df_100%)] px-screen pb-32 pt-[max(2rem,env(safe-area-inset-top))] no-scrollbar">
+      <div className="flex h-full min-h-0 flex-col overflow-y-auto bg-[linear-gradient(180deg,#fff7ce_0%,#fffdf4_42%,#fff9df_100%)] px-screen pb-[calc(8.5rem+env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] no-scrollbar">
         <header className="rounded-[32px] border border-white/70 bg-white/72 px-5 py-6 text-center shadow-[0_18px_40px_rgba(33,33,33,0.08)] backdrop-blur">
           <div className="mx-auto grid h-28 w-28 place-items-center rounded-[34px] bg-brand-yellow/15 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.65)]">
             <div className="grid h-full w-full place-items-center overflow-hidden rounded-[28px] border border-charcoal/5 bg-white text-[34px] font-black text-charcoal shadow-sm">
@@ -147,8 +146,6 @@ export default function ProfilePage() {
         <p className="mt-7 text-center text-[11px] font-bold uppercase tracking-[0.18em] text-charcoal/25">
           Innrspark v1.0.4 Beta
         </p>
-
-        <BottomNav />
       </div>
 
       {activePanel && (

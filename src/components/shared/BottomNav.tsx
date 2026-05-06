@@ -15,7 +15,10 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="absolute inset-x-0 bottom-0 z-30 rounded-t-[32px] border-t border-charcoal/10 bg-white/90 px-screen pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-12px_32px_rgba(33,33,33,0.06)] backdrop-blur-xl">
+    <nav
+      aria-label="Primary app navigation"
+      className="absolute inset-x-0 bottom-0 z-30 rounded-t-[32px] border-t border-charcoal/10 bg-white/92 px-screen pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-12px_32px_rgba(33,33,33,0.06)] backdrop-blur-xl"
+    >
       <div className="grid grid-cols-4 gap-1">
         {navItems.map((item) => {
           const Icon = item.icon;

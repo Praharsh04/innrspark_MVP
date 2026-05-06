@@ -1,8 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { useRoadmapStore } from "@/store/useRoadmapStore";
 import { MilestoneModal } from "./MilestoneModal";
-import { BottomNav } from "@/components/shared/BottomNav";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Flag } from "lucide-react";
 
@@ -11,12 +11,26 @@ const MILESTONE_SPACING = 160;
 export function RoadmapView() {
   const roadmap = useRoadmapStore((state) => state.roadmap);
   const activeMilestoneId = useRoadmapStore((state) => state.activeMilestoneId);
+  const loadSavedRoadmap = useRoadmapStore((state) => state.loadSavedRoadmap);
+  const loadMockRoadmap = useRoadmapStore((state) => state.loadMockRoadmap);
   const setActiveMilestoneId = useRoadmapStore((state) => state.setActiveMilestoneId);
   const toggleTask = useRoadmapStore((state) => state.toggleTask);
 
+  useEffect(() => {
+    if (roadmap) {
+      return;
+    }
+
+    loadSavedRoadmap().then((loaded) => {
+      if (!loaded) {
+        loadMockRoadmap();
+      }
+    });
+  }, [loadMockRoadmap, loadSavedRoadmap, roadmap]);
+
   if (!roadmap) {
     return (
-      <div className="flex min-h-dvh flex-col items-center justify-center bg-brand-cream px-8 text-center">
+      <div className="flex h-full min-h-0 flex-col items-center justify-center bg-brand-cream px-8 pb-[calc(8.5rem+env(safe-area-inset-bottom))] text-center">
         <div className="mb-6 h-16 w-16 animate-spin rounded-full border-4 border-brand-yellow border-t-charcoal" />
         <h2 className="text-2xl font-black text-charcoal tracking-tight">Crafting your path...</h2>
         <p className="mt-2 font-bold text-charcoal/40 uppercase tracking-widest text-sm">SPARKI IS ANALYZING YOUR PROFILE</p>
@@ -65,7 +79,7 @@ export function RoadmapView() {
         <h2 className="text-[22px] font-black text-charcoal tracking-tight leading-none mt-1">{roadmap.careerTitle}</h2>
       </header>
 
-      <div className="flex-1 overflow-y-auto pt-12 pb-64 scroll-smooth no-scrollbar">
+      <div className="flex-1 overflow-y-auto pt-12 pb-[calc(10rem+env(safe-area-inset-bottom))] scroll-smooth no-scrollbar">
         <div 
           className="relative mx-auto w-full max-w-[334px]"
           style={{ height: `${containerHeight}px` }}
@@ -199,8 +213,6 @@ export function RoadmapView() {
           />
         )}
       </AnimatePresence>
-
-      <BottomNav />
     </div>
   );
 }

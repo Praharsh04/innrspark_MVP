@@ -1,101 +1,153 @@
 "use client";
 
-import { TrendingUp, CheckCircle2, Flag, ArrowRight } from "lucide-react";
+import { useEffect, useMemo } from "react";
+import { ArrowRight, CheckCircle2, Flag, Map, TrendingUp } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
-import { BottomNav } from "@/components/shared/BottomNav";
 import { ProgressCard } from "@/components/progress/ProgressCard";
 import { ProgressBar } from "@/components/shared/ProgressBar";
-import { mockRoadmap } from "@/data/mockRoadmap";
+import { useRoadmapStore } from "@/store/useRoadmapStore";
 
 export default function ProgressPage() {
-  // Mock data for now since stores are being refactored
-  const selectedCareer = "Product Manager";
-  const completedTasks = ["Read about product manager responsibilities", "Map one app you use daily"];
+  const roadmap = useRoadmapStore((state) => state.roadmap);
+  const loadSavedRoadmap = useRoadmapStore((state) => state.loadSavedRoadmap);
+  const loadMockRoadmap = useRoadmapStore((state) => state.loadMockRoadmap);
 
-  // Calculate stats from mockRoadmap (assuming it's the selected one)
-  const totalTasks = mockRoadmap.milestones.reduce((acc, m) => acc + m.tasks.length, 0);
-  const completedCount = completedTasks.length;
-  const progressPercent = Math.round((completedCount / totalTasks) * 100);
+  useEffect(() => {
+    if (roadmap) {
+      return;
+    }
 
-  const currentMilestone = mockRoadmap.milestones.find(m =>
-    m.tasks.some(t => !completedTasks.includes(t.title))
-  ) || mockRoadmap.milestones[0];
+    loadSavedRoadmap().then((loaded) => {
+      if (!loaded) {
+        loadMockRoadmap();
+      }
+    });
+  }, [loadMockRoadmap, loadSavedRoadmap, roadmap]);
 
-  const nextTask = currentMilestone.tasks.find(t => !completedTasks.includes(t.title));
+  const progress = useMemo(() => {
+    const milestones = roadmap?.milestones ?? [];
+    const tasks = milestones.flatMap((milestone) =>
+      milestone.tasks.map((task) => ({
+        ...task,
+        milestoneId: milestone.id,
+        milestoneTitle: milestone.title,
+      })),
+    );
+    const completedTasks = tasks.filter((task) => task.completed);
+    const nextTask = tasks.find((task) => !task.completed) ?? null;
+    const currentMilestone =
+      milestones.find((milestone) => milestone.tasks.some((task) => !task.completed)) ??
+      milestones[milestones.length - 1] ??
+      null;
+    const completedMilestones = milestones.filter(
+      (milestone) => milestone.tasks.length > 0 && milestone.tasks.every((task) => task.completed),
+    ).length;
+    const percentage = tasks.length > 0 ? Math.round((completedTasks.length / tasks.length) * 100) : 0;
+
+    return {
+      completedTasks,
+      currentMilestone,
+      completedMilestones,
+      nextTask,
+      percentage,
+      totalMilestones: milestones.length,
+      totalTasks: tasks.length,
+    };
+  }, [roadmap]);
 
   return (
     <MobileShell withBottomNav>
-      <div className="flex h-full flex-col px-screen pt-12 overflow-y-auto no-scrollbar pb-32">
-        <h1 className="text-[34px] font-black tracking-tight text-charcoal leading-none">Your Progress</h1>
-        <p className="mt-4 text-[17px] font-bold text-charcoal/50 leading-relaxed">Keep going! You&apos;re making great strides.</p>
+      <div className="flex h-full min-h-0 flex-col overflow-y-auto bg-brand-cream px-screen pb-[calc(8.5rem+env(safe-area-inset-bottom))] pt-[max(3rem,env(safe-area-inset-top))] no-scrollbar">
+        <h1 className="text-[34px] font-black leading-none tracking-tight text-charcoal">Your Progress</h1>
+        <p className="mt-4 text-[17px] font-bold leading-relaxed text-charcoal/50">
+          {progress.totalTasks > 0
+            ? "Track how each completed task moves your roadmap forward."
+            : "Your roadmap progress will appear here once a path is generated."}
+        </p>
 
-        {/* Career Summary */}
-        <div className="mt-10 rounded-3xl bg-charcoal p-7 text-white shadow-premium relative overflow-hidden ring-1 ring-white/10">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-brand-yellow/10 rounded-full -mr-16 -mt-16 blur-3xl"></div>
-          <div className="flex items-center justify-between relative z-10">
+        <section className="relative mt-9 overflow-hidden rounded-3xl bg-charcoal p-7 text-white shadow-premium ring-1 ring-white/10">
+          <div className="absolute right-0 top-0 h-32 w-32 -mr-16 -mt-16 rounded-full bg-brand-yellow/10 blur-3xl" />
+          <div className="relative z-10 flex items-center justify-between gap-4">
             <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40">Current Path</span>
-            <div className="rounded-full bg-brand-yellow px-3 py-1 text-[10px] font-black uppercase text-charcoal shadow-sm">Active</div>
-          </div>
-          <h2 className="mt-3 text-[26px] font-black relative z-10 tracking-tight">{selectedCareer}</h2>
-
-          <div className="mt-8 relative z-10">
-            <div className="flex justify-between text-[13px] font-black mb-2.5">
-              <span className="text-white/60 uppercase tracking-widest">Roadmap Completion</span>
-              <span className="text-brand-yellow">{progressPercent}%</span>
+            <div className="shrink-0 rounded-full bg-brand-yellow px-3 py-1 text-[10px] font-black uppercase text-charcoal shadow-sm">
+              Active
             </div>
-            <ProgressBar value={progressPercent} />
           </div>
-        </div>
+          <h2 className="relative z-10 mt-3 break-words text-[26px] font-black leading-tight tracking-tight">
+            {roadmap?.careerTitle ?? "No path selected yet"}
+          </h2>
 
-        {/* Stats Grid */}
-        <div className="mt-5 grid grid-cols-2 gap-4">
+          <div className="relative z-10 mt-8">
+            <div className="mb-2.5 flex justify-between gap-4 text-[13px] font-black">
+              <span className="text-white/60 uppercase tracking-widest">Roadmap Completion</span>
+              <span className="text-brand-yellow">{progress.percentage}%</span>
+            </div>
+            <ProgressBar value={progress.percentage} />
+          </div>
+        </section>
+
+        <section className="mt-5 grid grid-cols-2 gap-3">
           <ProgressCard
             title="Tasks"
-            value={completedCount}
-            subtitle={`of ${totalTasks} total`}
+            value={progress.completedTasks.length}
+            subtitle={`of ${progress.totalTasks} total`}
             icon={<CheckCircle2 size={22} strokeWidth={2.5} />}
           />
           <ProgressCard
-            title="Milestone"
-            value={1}
-            subtitle="of 5 levels"
+            title="Milestones"
+            value={progress.completedMilestones}
+            subtitle={`of ${progress.totalMilestones} complete`}
             icon={<Flag size={22} strokeWidth={2.5} />}
           />
-        </div>
+        </section>
 
-        {/* Next Task Card */}
-        <div className="mt-5 rounded-3xl border-2 border-dashed border-charcoal/10 bg-white/40 p-6 transition active:scale-[0.98]">
+        <section className="mt-5 rounded-3xl border-2 border-dashed border-charcoal/10 bg-white/50 p-6">
           <p className="text-[11px] font-black uppercase tracking-[0.2em] text-charcoal/30">Next Recommended Task</p>
           <div className="mt-4 flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-brand-softYellow text-charcoal shadow-sm border border-charcoal/5">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-charcoal/5 bg-brand-softYellow text-charcoal shadow-sm">
               <TrendingUp size={22} strokeWidth={2.5} />
             </div>
-            <div className="flex-1">
-              <h3 className="text-[17px] font-black text-charcoal leading-tight tracking-tight">
-                {nextTask?.title || "No more tasks!"}
+            <div className="min-w-0 flex-1">
+              <h3 className="break-words text-[17px] font-black leading-tight tracking-tight text-charcoal">
+                {progress.nextTask?.title ?? "No open tasks right now"}
               </h3>
-              <p className="mt-1.5 text-[13px] font-bold text-charcoal/40 uppercase tracking-wide">In {currentMilestone.title}</p>
+              <p className="mt-1.5 text-[13px] font-bold uppercase tracking-wide text-charcoal/40">
+                {progress.currentMilestone ? `In ${progress.currentMilestone.title}` : "Generate a roadmap to begin"}
+              </p>
             </div>
-            <div className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-charcoal/5">
+            <div className="ml-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-charcoal/5">
               <ArrowRight size={16} strokeWidth={2.5} className="text-charcoal/30" />
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Recent Activity */}
-        <div className="mt-10 mb-8">
-          <h4 className="text-[20px] font-black text-charcoal tracking-tight">Recent Completions</h4>
-          <div className="mt-5 space-y-4">
-            {completedTasks.slice(0, 2).map((task, i) => (
-              <div key={i} className="flex items-center gap-4 py-3 px-4 rounded-2xl bg-white border border-charcoal/5 shadow-sm">
-                <div className="h-2.5 w-2.5 rounded-full bg-brand-yellow shadow-sm" />
-                <span className="text-[15px] font-bold text-charcoal/70 leading-snug">{task}</span>
-              </div>
-            ))}
+        <section className="mt-8">
+          <div className="flex items-center gap-2">
+            <Map size={20} strokeWidth={2.5} className="text-brand-yellow" />
+            <h4 className="text-[20px] font-black tracking-tight text-charcoal">Recent Completions</h4>
           </div>
-        </div>
-
-        <BottomNav />
+          <div className="mt-5 space-y-3">
+            {progress.completedTasks.length > 0 ? (
+              progress.completedTasks.slice(-4).reverse().map((task) => (
+                <div key={task.id} className="flex items-start gap-4 rounded-2xl border border-charcoal/5 bg-white px-4 py-3 shadow-sm">
+                  <div className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full bg-brand-yellow shadow-sm" />
+                  <div className="min-w-0">
+                    <span className="block break-words text-[15px] font-bold leading-snug text-charcoal/75">{task.title}</span>
+                    <span className="mt-1 block text-[12px] font-black uppercase tracking-[0.14em] text-charcoal/30">
+                      {task.milestoneTitle}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="rounded-2xl border border-charcoal/5 bg-white/70 px-4 py-5 text-center shadow-sm">
+                <p className="text-[14px] font-bold leading-relaxed text-charcoal/45">
+                  Check off tasks from your roadmap and they will show up here.
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
       </div>
     </MobileShell>
   );

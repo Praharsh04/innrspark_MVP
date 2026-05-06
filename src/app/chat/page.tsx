@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import { ChevronDown, Bot } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
-import { BottomNav } from "@/components/shared/BottomNav";
 import { useChatStore } from "@/store/useChatStore";
 
 import { ChatBubble } from "@/components/chat/ChatBubble";
@@ -25,7 +24,7 @@ export default function ChatPage() {
 
   return (
     <MobileShell withBottomNav>
-      <div className="relative flex min-h-dvh flex-col bg-brand-cream">
+      <div className="relative flex h-full min-h-0 flex-col bg-brand-cream">
         {/* Header */}
         <header className="flex items-center justify-center border-b border-charcoal/10 px-screen py-7 bg-white shadow-sm">
           <button className="flex items-center gap-2 rounded-2xl bg-brand-cream px-5 py-2.5 shadow-sm border border-charcoal/5 active:scale-[0.97] transition-all">
@@ -76,7 +75,6 @@ export default function ChatPage() {
         {/* Fixed Chat Input */}
         <ChatInput onSend={sendMessage} disabled={isTyping} />
 
-        <BottomNav />
       </div>
     </MobileShell>
   );
