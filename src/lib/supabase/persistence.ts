@@ -1,5 +1,4 @@
 import { getSupabaseBrowserClient } from "./client";
-import { getSupabaseEnv } from "./env";
 import type { Json } from "./types";
 
 export type PersistenceResult<T = null> = {
@@ -48,9 +47,6 @@ export async function signInWithGoogle(redirectTo: string): Promise<PersistenceR
     provider: "google",
     options: {
       redirectTo,
-      queryParams: {
-        apikey: getSupabaseEnv().anonKey,
-      },
     },
   });
 

@@ -43,7 +43,7 @@ export function LoginForm() {
   const handleGoogleLogin = async () => {
     setFormNotice(null);
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, "") || window.location.origin;
-    const redirectTo = `${siteUrl}/auth`;
+    const redirectTo = `${siteUrl}/auth/callback`;
     const started = await loginWithGoogle(redirectTo);
 
     if (started && useUserStore.getState().isLoggedIn) {

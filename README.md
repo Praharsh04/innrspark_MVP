@@ -64,9 +64,10 @@ Required Supabase auth setup:
 - Enable Google as an auth provider in Supabase.
 - Add the Google OAuth client ID and secret in Supabase Auth providers.
 - Add your local and production callback URLs in Supabase URL configuration:
-  - `http://localhost:3000/auth`
-  - `https://your-app.vercel.app/auth`
-- Add the same authorized redirect URI in Google Cloud OAuth settings.
+  - `http://localhost:3000/auth/callback`
+  - `https://your-app.vercel.app/auth/callback`
+- In Google Cloud OAuth settings, add Supabase's provider callback URL:
+  - `https://your-project-ref.supabase.co/auth/v1/callback`
 
 The app keeps a local/mock fallback when Supabase environment variables are missing.
 
@@ -106,7 +107,7 @@ YouTube is used only when the user explicitly asks for YouTube, videos, playlist
 3. Set the project root to this folder if the repo contains parent folders.
 4. Add all required environment variables in Vercel Project Settings.
 5. Set `NEXT_PUBLIC_SITE_URL` to the final Vercel URL or custom domain.
-6. Add the production `/auth` URL to Supabase and Google OAuth redirect settings.
+6. Add the production `/auth/callback` URL to Supabase and Google OAuth redirect settings.
 7. Deploy.
 
 Build command:
