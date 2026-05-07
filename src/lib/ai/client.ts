@@ -31,8 +31,8 @@ export type JsonModelCallResult<T> = {
 };
 
 const GEMINI_API_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
-const DEFAULT_MODEL = "gemini-2.5-flash";
-const FALLBACK_MODELS = ["gemini-2.0-flash", "gemini-flash-latest"];
+const DEFAULT_MODEL = "gemini-1.5-flash";
+const FALLBACK_MODELS = ["gemini-1.5-pro", "gemini-1.0-pro"];
 const REQUEST_TIMEOUT_MS = 15000;
 
 export async function callJsonModel<T>(options: JsonModelCallOptions<T>): Promise<JsonModelCallResult<T>> {
