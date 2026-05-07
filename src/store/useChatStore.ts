@@ -13,7 +13,7 @@ type ChatState = {
   status: "idle" | "sending" | "error";
   error: string | null;
   loadRecentMessages: () => Promise<void>;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, staticSystemPrompt?: string, roadmapSnippet?: string) => Promise<void>;
   startNewChat: () => void;
   restoreChat: (index: number) => void;
 };
@@ -63,7 +63,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     }
   },
 
-  sendMessage: async (content: string) => {
+  sendMessage: async (content: string, staticSystemPrompt?: string, roadmapSnippet?: string) => {
     const trimmedContent = content.trim();
 
     if (!trimmedContent || get().isTyping) {
@@ -84,7 +84,12 @@ export const useChatStore = create<ChatState>((set, get) => ({
       error: null,
     }));
 
-    const apiResponse = await sendMessageToApi(trimmedContent, get().messages.slice(-5));
+    const apiResponse = await sendMessageToApi(
+      trimmedContent, 
+      get().messages.slice(-20), // Rolling window of 20 (10 pairs)
+      staticSystemPrompt,
+      roadmapSnippet
+    );
     const assistantMessage: ChatMessage = {
       id: (Date.now() + 1).toString(),
       role: "assistant",
@@ -124,6 +129,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
 async function sendMessageToApi(
   content: string,
   history: ChatMessage[],
+  staticSystemPrompt?: string,
+  roadmapSnippet?: string,
 ): Promise<{
   message: string;
   error: string | null;
@@ -135,13 +142,27 @@ async function sendMessageToApi(
   const accessToken = supabase ? (await supabase.auth.getSession()).data.session?.access_token : null;
 
   try {
+    const historyWithContext = [...history];
+    if (roadmapSnippet) {
+      historyWithContext.unshift({
+        id: "context-snippet",
+        role: "user",
+        content: `[Context: ${roadmapSnippet}]`,
+        createdAt: new Date().toISOString(),
+      });
+    }
+
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-      body: JSON.stringify({ message: content, history }),
+      body: JSON.stringify({
+        message: content,
+        history: historyWithContext,
+        context: { staticSystemPrompt },
+      }),
     });
 
     if (!response.ok) {

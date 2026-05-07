@@ -7,21 +7,80 @@ import { useChatStore } from "@/store/useChatStore";
 
 import { ChatBubble } from "@/components/chat/ChatBubble";
 import { ChatInput } from "@/components/chat/ChatInput";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
+import { traitLabels, type TraitId } from "@/lib/assessment/traits";
 
 export default function ChatPage() {
   const { messages, pastChats, sendMessage, isTyping, error, loadRecentMessages, startNewChat, restoreChat } = useChatStore();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showPastChats, setShowPastChats] = useState(false);
+  const [mentorContext, setMentorContext] = useState<{ systemPrompt: string; roadmapSnippet: string } | null>(null);
 
   useEffect(() => {
     loadRecentMessages();
   }, [loadRecentMessages]);
 
   useEffect(() => {
+    async function initMentorContext() {
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) return;
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      const userId = session.user.id;
+
+      const [careerRes, profileRes, roadmapRes] = await Promise.all([
+        supabase.from("selected_careers").select("career_title").eq("user_id", userId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+        supabase.from("psychometric_profiles").select("profile").eq("user_id", userId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+        supabase.from("roadmaps").select("id, roadmap").eq("user_id", userId).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+      ]);
+
+      const careerGoal = careerRes.data?.career_title || "Professional Development";
+      const personality = summarizePersonality(profileRes.data?.profile);
+      
+      const staticSystemPrompt = `You are an elite professional mentor specialized in ${careerGoal}.
+
+You have deep industry knowledge — skills, hiring bars, tools, learning paths, and real challenges in this field.
+
+About this user:
+- Career goal: ${careerGoal}
+- Personality: ${personality}
+
+Mentor behavior:
+- Be specific and direct. No generic advice.
+- Reference their progress naturally when relevant.
+- Speak like a senior professional, not an AI assistant.
+- Be honest about gaps, constructive about fixing them.
+- Suggest real resources — specific books, courses, tools for ${careerGoal}.
+- Keep responses concise unless user asks for depth.`;
+
+      let roadmapSnippet = "";
+      if (roadmapRes.data?.id && roadmapRes.data?.roadmap) {
+        const { data: progressRows } = await supabase
+          .from("roadmap_progress")
+          .select("task_id, completed")
+          .eq("roadmap_id", roadmapRes.data.id)
+          .eq("user_id", userId);
+
+        const roadmapWithProgress = applyProgressToRoadmap(roadmapRes.data.roadmap, progressRows || []);
+        roadmapSnippet = buildRoadmapSnippet(roadmapWithProgress);
+      }
+
+      setMentorContext({ systemPrompt: staticSystemPrompt, roadmapSnippet });
+    }
+
+    initMentorContext();
+  }, []);
+
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages, isTyping]);
+
+  const handleSend = (content: string) => {
+    sendMessage(content, mentorContext?.systemPrompt, mentorContext?.roadmapSnippet);
+  };
 
   return (
     <MobileShell withBottomNav>
@@ -144,10 +203,57 @@ export default function ChatPage() {
         </div>
 
         {/* Fixed Chat Input */}
-        <ChatInput onSend={sendMessage} disabled={isTyping} />
+        <ChatInput onSend={handleSend} disabled={isTyping} />
 
       </div>
     </MobileShell>
   );
+}
 
+// Helpers
+function summarizePersonality(profile: any): string {
+  const traits = profile?.dominantTraits || profile?.traits || [];
+  if (Array.isArray(traits) && traits.length > 0) {
+    return traits
+      .slice(0, 4)
+      .map((t: any) => {
+        const id = (typeof t === "string" ? t : (t.traitId || t.id)) as TraitId;
+        return traitLabels[id] || id.replace(/_/g, " ");
+      })
+      .join(", ")
+      .toLowerCase();
+  }
+  return "balanced and adaptable";
+}
+
+function applyProgressToRoadmap(roadmap: any, progressRows: any[]): any {
+  if (!roadmap || !roadmap.milestones) return roadmap;
+  const progressByTaskId = new Map(progressRows.map(r => [r.task_id, r.completed]));
+  return {
+    ...roadmap,
+    milestones: roadmap.milestones.map((m: any) => ({
+      ...m,
+      tasks: (m.tasks || []).map((t: any) => ({
+        ...t,
+        completed: progressByTaskId.get(t.id) ?? t.completed
+      }))
+    }))
+  };
+}
+
+function buildRoadmapSnippet(roadmap: any): string {
+  if (!roadmap || !roadmap.milestones) return "";
+  const milestones = roadmap.milestones;
+  const total = milestones.length;
+  
+  const completedMilestones = milestones.filter((m: any) => 
+    m.tasks && m.tasks.length > 0 && m.tasks.every((t: any) => t.completed)
+  );
+  
+  const lastCompleted = completedMilestones[completedMilestones.length - 1]?.title || "None";
+  const current = milestones.find((m: any) => m.tasks && m.tasks.some((t: any) => !t.completed))?.title || "None";
+  const currentIndex = milestones.findIndex((m: any) => m.tasks && m.tasks.some((t: any) => !t.completed));
+  const next = milestones[currentIndex + 1]?.title || "None";
+
+  return `Progress: ${completedMilestones.length}/${total} done. Last: ${lastCompleted}. Current: ${current}. Next: ${next}.`;
 }

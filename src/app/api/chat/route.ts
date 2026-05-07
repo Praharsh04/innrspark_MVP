@@ -20,17 +20,19 @@ type AuthContext = {
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as Partial<ChatApiRequest> | null;
   const userMessage = body?.message?.trim();
+  const history = body?.history || [];
+  const clientContext = body?.context as any;
 
   if (!userMessage) {
     return NextResponse.json({ error: "Message is required." }, { status: 400 });
   }
 
   const authContext = await getAuthContext(request);
-  const context = authContext ? await tryBuildContext(authContext) : null;
-  const compactContext = buildCompactChatbotContext({
-    context,
-    clientHistory: body?.history,
-  });
+  const staticSystemPrompt = clientContext?.staticSystemPrompt;
+
+  // Use client-provided system prompt or build fallback if missing
+  const finalSystemPrompt = staticSystemPrompt || SPARKI_SYSTEM_PROMPT;
+
   const chatIntent = detectChatbotUserIntent(userMessage);
 
   if (authContext) {
@@ -88,18 +90,15 @@ export async function POST(request: Request) {
 
   const aiResult = await callJsonModel<SparkiAiResponse>({
     messages: [
-      { role: "system", content: SPARKI_SYSTEM_PROMPT },
-      {
-        role: "user",
-        content: buildSparkiUserPrompt({
-          userMessage,
-          compactContext,
-          intent: chatIntent,
-        }),
-      },
+      { role: "system", content: finalSystemPrompt },
+      ...history.map((m: any) => ({
+        role: m.role as "user" | "assistant",
+        content: m.content,
+      })),
+      { role: "user", content: userMessage },
     ],
     validate: isSparkiAiResponse,
-    fallback: { message: buildNormalChatFallback(userMessage, compactContext, chatIntent) },
+    fallback: { message: "I'm having trouble connecting right now, but I can still chat. Tell me what you want to think through." },
     temperature: 0.55,
     maxOutputTokens: 420,
     retryInvalidJson: false,
