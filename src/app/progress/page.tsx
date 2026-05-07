@@ -65,24 +65,39 @@ export default function ProgressPage() {
             : "Your roadmap progress will appear here once a path is generated."}
         </p>
 
-        <section className="relative mt-9 overflow-hidden rounded-3xl bg-charcoal p-7 text-white shadow-premium ring-1 ring-white/10">
-          <div className="absolute right-0 top-0 h-32 w-32 -mr-16 -mt-16 rounded-full bg-brand-yellow/10 blur-3xl" />
-          <div className="relative z-10 flex items-center justify-between gap-4">
-            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40">Current Path</span>
-            <div className="shrink-0 rounded-full bg-brand-yellow px-3 py-1 text-[10px] font-black uppercase text-charcoal shadow-sm">
-              Active
+        <section className="mt-9 rounded-3xl border border-charcoal/10 bg-white p-7 shadow-sm">
+          <div className="space-y-6">
+            {/* Roadmap Progress */}
+            <div>
+              <div className="mb-2.5 flex items-end justify-between">
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-charcoal/30">ROADMAP PROGRESS</span>
+                <span className="text-[18px] font-black leading-none text-charcoal">{progress.percentage}%</span>
+              </div>
+              <div className="h-4 w-full overflow-hidden rounded-full bg-charcoal/5">
+                <div
+                  className="h-full rounded-full bg-brand-yellow transition-all duration-500"
+                  style={{ width: `${progress.percentage}%` }}
+                />
+              </div>
             </div>
-          </div>
-          <h2 className="relative z-10 mt-3 break-words text-[26px] font-black leading-tight tracking-tight">
-            {roadmap?.careerTitle ?? "No path selected yet"}
-          </h2>
 
-          <div className="relative z-10 mt-8">
-            <div className="mb-2.5 flex justify-between gap-4 text-[13px] font-black">
-              <span className="text-white/60 uppercase tracking-widest">Roadmap Completion</span>
-              <span className="text-brand-yellow">{progress.percentage}%</span>
+            {/* Milestones Progress */}
+            <div>
+              <div className="mb-2.5 flex items-end justify-between">
+                <span className="text-[11px] font-black uppercase tracking-[0.2em] text-charcoal/30">MILESTONES</span>
+                <span className="text-[14px] font-black leading-none text-charcoal">
+                  {progress.completedMilestones} of {progress.totalMilestones}
+                </span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-charcoal/5">
+                <div
+                  className="h-full rounded-full bg-brand-yellow transition-all duration-500"
+                  style={{
+                    width: `${progress.totalMilestones > 0 ? (progress.completedMilestones / progress.totalMilestones) * 100 : 0}%`,
+                  }}
+                />
+              </div>
             </div>
-            <ProgressBar value={progress.percentage} />
           </div>
         </section>
 
