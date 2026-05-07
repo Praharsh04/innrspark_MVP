@@ -11,15 +11,18 @@ import { OptionButton } from "@/components/assessment/OptionButton";
 import { QuestionCard } from "@/components/assessment/QuestionCard";
 import { AssessmentOptionKey } from "@/types/assessment";
 
+const DEMO_QUESTION_LIMIT = 10;
+const demoQuestions = mockQuestions.slice(0, DEMO_QUESTION_LIMIT);
+
 export default function AssessmentQuestionPage() {
   const router = useRouter();
   const { currentQuestionIndex, answerQuestion, completeAssessment, isComplete } = useAssessmentStore();
-  
+
   const [selectedKey, setSelectedKey] = useState<AssessmentOptionKey | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const currentQuestion = mockQuestions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / mockQuestions.length) * 100;
+  const currentQuestion = demoQuestions[currentQuestionIndex];
+  const progress = ((currentQuestionIndex + 1) / demoQuestions.length) * 100;
 
   useEffect(() => {
     if (isComplete) {
@@ -29,20 +32,20 @@ export default function AssessmentQuestionPage() {
 
   const handleSelect = (key: string) => {
     if (isTransitioning) return;
-    
+
     const optionKey = key as AssessmentOptionKey;
     setSelectedKey(optionKey);
     setIsTransitioning(true);
-    
+
     // Save answer
     answerQuestion(currentQuestion.id, optionKey);
-    
+
     // 1 second delay before moving to next question
     setTimeout(() => {
       const { isComplete: completeAfterAnswer } = useAssessmentStore.getState();
-      const isLastMockQuestion = currentQuestionIndex >= mockQuestions.length - 1;
+      const isLastDemoQuestion = currentQuestionIndex >= demoQuestions.length - 1;
 
-      if (completeAfterAnswer || isLastMockQuestion) {
+      if (completeAfterAnswer || isLastDemoQuestion) {
         if (!completeAfterAnswer) {
           completeAssessment();
         }

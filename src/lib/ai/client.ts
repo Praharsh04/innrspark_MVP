@@ -130,12 +130,21 @@ async function requestGeminiJson<T>(options: JsonModelCallOptions<T>, apiKey: st
 }
 
 function getModelCandidates(requestedModel?: string): string[] {
-  const preferredModel = cleanEnvValue(requestedModel) ?? cleanEnvValue(process.env.GEMINI_MODEL) ?? DEFAULT_MODEL;
+  const preferredModel = 
+    cleanEnvValue(requestedModel) ?? 
+    cleanEnvValue(process.env.GEMINI_MODEL) ?? 
+    cleanEnvValue(process.env.NEXT_PUBLIC_GEMINI_MODEL) ?? 
+    DEFAULT_MODEL;
   return Array.from(new Set([preferredModel, ...FALLBACK_MODELS]));
 }
 
 function getGoogleAiApiKey(): string | null {
-  return cleanEnvValue(process.env.GEMINI_API_KEY) ?? cleanEnvValue(process.env.GOOGLE_API_KEY);
+  return (
+    cleanEnvValue(process.env.GEMINI_API_KEY) ??
+    cleanEnvValue(process.env.NEXT_PUBLIC_GEMINI_API_KEY) ??
+    cleanEnvValue(process.env.GOOGLE_API_KEY) ??
+    cleanEnvValue(process.env.NEXT_PUBLIC_GOOGLE_API_KEY)
+  );
 }
 
 function cleanEnvValue(value: string | undefined): string | null {

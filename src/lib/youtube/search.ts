@@ -29,7 +29,11 @@ export async function searchYouTubeVideos(params: {
   topic: string;
   level: ResourceLevel;
 }): Promise<SearchResult<VideoResource>> {
-  const apiKey = cleanEnvValue(process.env.YOUTUBE_API_KEY);
+  const apiKey = 
+    cleanEnvValue(process.env.YOUTUBE_API_KEY) ?? 
+    cleanEnvValue(process.env.NEXT_PUBLIC_YOUTUBE_API_KEY) ??
+    cleanEnvValue(process.env.GOOGLE_API_KEY) ??
+    cleanEnvValue(process.env.NEXT_PUBLIC_GOOGLE_API_KEY);
 
   if (!apiKey) {
     return {

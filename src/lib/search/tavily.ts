@@ -20,7 +20,7 @@ export async function searchLearningResources(params: {
   topic: string;
   level: ResourceLevel;
 }): Promise<SearchResult<LearningResource>> {
-  const apiKey = cleanEnvValue(process.env.TAVILY_API_KEY);
+  const apiKey = cleanEnvValue(process.env.TAVILY_API_KEY) ?? cleanEnvValue(process.env.NEXT_PUBLIC_TAVILY_API_KEY);
 
   if (!apiKey) {
     return {
